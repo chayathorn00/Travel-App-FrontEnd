@@ -206,7 +206,7 @@ const HomePage = () => {
         >
           <View>
             <View style={styles.recommaendContainner}>
-              <Text style={styles.title}>แนะนำสถานที่ใกล้คุณ</Text>
+              <Text style={styles.title}>เหมาะกับคุณ</Text>
             </View>
             <Image
               source={require("../assets/image-16.png")}

@@ -41,62 +41,75 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
   return (
 
-    <ImageBackground
-      source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
+    <View style={styles.wrapper}>
+      <ImageBackground
+          source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
           style={styles.container}
+          imageStyle={{ opacity: 0.4 }} // ยิ่งน้อย = ยิ่งโปร่งแสง = ยิ่งดูสว่าง
           resizeMode="cover"
-      >
-      <SafeAreaView />
-      <Header page="1" />
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.detailContainer}>
-          <Progress progress="25" />
-          <Text style={styles.title}>ตอนนี้สนใจสถานที่ไหนบ้างเอ่ยย</Text>
+        >
 
-          {/* Grid ตัวเลือก */}
-          <View style={styles.imageGrid}>
-            {places.map((place) => (
-             <Pressable
-             key={place.picture_id}
-             style={[
-               styles.optionContainer,
-               selectedOption === place.picture_id && styles.optionSelected,
-             ]}
-             onPress={() => setSelectedOption(place.picture_id)}
-           >
-             <Image source={{ uri: place.picture_url }} style={styles.image} />
-             {selectedOption === place.picture_id && (
-               <View style={styles.overlay}></View>
-             )}
-           </Pressable>
-           
-            ))}
+        <SafeAreaView />
+        <Header page="1" />
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.detailContainer}>
+            <Progress progress="25" />
+            <Text style={styles.title}>ตอนนี้สนใจสถานที่ไหนบ้างเอ่ยย</Text>
+
+            <View style={styles.imageGrid}>
+              {places.map((place) => (
+                <Pressable
+                  key={place.picture_id}
+                  style={[
+                    styles.optionContainer,
+                    selectedOption === place.picture_id && styles.optionSelected,
+                  ]}
+                  onPress={() => setSelectedOption(place.picture_id)}
+                >
+                  <Image source={{ uri: place.picture_url }} style={styles.image} />
+                  {selectedOption === place.picture_id && <View style={styles.overlay}></View>}
+                </Pressable>
+              ))}
+            </View>
           </View>
-        </View>
-      </ScrollView>
-      {/* ปุ่มต่อไป */}
-      <TouchableOpacity
-  style={[
-    styles.arrowButton,
-    !selectedOption && styles.buttonDisabled,
-  ]}
-  onPress={() => {
-    if (selectedOption) {
-      navigation.navigate("QA2", { selectedOption: selectedOption.toString() });
-    }
-  }}
-  disabled={!selectedOption}
->
-<Ionicons name="arrow-forward-circle" size={40} color={Color.colorCornflowerblue} />
+        </ScrollView>
 
-</TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.arrowButton,
+            !selectedOption && styles.buttonDisabled,
+          ]}
+          onPress={() => {
+            if (selectedOption) {
+              navigation.navigate("QA2", { selectedOption: selectedOption.toString() });
+            }
+          }}
+          disabled={!selectedOption}
+        >
+          <Ionicons name="arrow-forward-circle" size={40} color={selectedOption ? "#5893d8" : "#999"} />
+        </TouchableOpacity>
+      </ImageBackground>
+    </View>
 
-
-    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    position: "relative",
+  },
+  bgOverlay: {
+    ...StyleSheet.absoluteFillObject, // fill เต็มหน้าจอ
+    backgroundColor: "rgba(255,255,255,0.3)", // เปลี่ยนค่าสี/opacity ได้ตามต้องการ
+    zIndex: 1,
+  },
+  container: {
+    flex: 1,
+    position: "relative",
+    zIndex: 0, // อยู่ใต้ overlay
+  },
+  
   overlay: {
     position: "absolute",
     top: 0,
@@ -113,10 +126,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },  
-  container: {
-    flex: 1,
-    backgroundColor: Color.colorWhite,
-  },
   scrollContainer: {
     paddingBottom: 100,
   },

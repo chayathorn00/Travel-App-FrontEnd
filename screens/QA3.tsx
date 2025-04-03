@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   TextInput,
+  ImageBackground,
 } from "react-native";
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -18,6 +19,8 @@ import Header from "../component/Header";
 import Progress from "../component/Progress";
 import Bank from "../assets/Bank.svg";
 import { BASE_URL } from "../config";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 
 const QA3 = () => {
   const navigation =
@@ -43,13 +46,19 @@ const QA3 = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView />
-      <Header page="3" />
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <View style={styles.wrapper}>
+  <ImageBackground
+    source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
+    style={styles.container}
+    imageStyle={{ opacity: 0.7 }}
+    resizeMode="cover"
+  >
+    <SafeAreaView />
+    <Header page="3" />
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.detailContainer}>
         <Progress progress="75" />
         <Text style={styles.title}>ระยะทางในการเดินทาง</Text>
-
         <View style={styles.optionGrid}>
           {distances.map((distance) => (
             <TouchableOpacity
@@ -72,74 +81,85 @@ const QA3 = () => {
           ))}
         </View>
 
-        {/* งบประมาณ */}
         <Text style={styles.title}>งบประมาณในการเดินทาง</Text>
         <View style={styles.inputContainer}>
           <TextInput
             onChangeText={(text) => {
-              const numericValue = text.replace(/[^0-9]/g, ""); // ✅ ลบอักขระที่ไม่ใช่ตัวเลข
+              const numericValue = text.replace(/[^0-9]/g, "");
               setButget(numericValue);
             }}
-            value={butget} // ✅ แสดงค่าใน input
+            value={butget}
             keyboardType="numeric"
             style={styles.input}
             placeholder="กรอกงบประมาณ"
+            
           />
           <Bank width={20} height={20} />
         </View>
-      </ScrollView>
+      </View>
+    </ScrollView>
 
-      {/* ปุ่มกลับ */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>กลับ</Text>
-      </TouchableOpacity>
+    <TouchableOpacity
+      style={styles.backButton}
+      onPress={() => navigation.goBack()}
+    >
+      <Ionicons name="arrow-back-circle" size={40} color="#5893d8" />
+    </TouchableOpacity>
 
-      {/* ปุ่มต่อไป */}
-      <TouchableOpacity
-        style={[styles.nextButton, !(selectedDistance && butget) && styles.buttonDisabled]}
-        onPress={() => {
-          if (selectedDistance && butget) {
-            navigation.navigate("QA4", { 
-              selectedOption,  // ✅ ส่งค่าที่เลือกจาก QA1
-              selectedPlan,    // ✅ ส่งค่าที่เลือกจาก QA2
-              selectedDistance, // ✅ ส่งค่าที่เลือกจาก QA3
-              butget           // ✅ ส่งค่าที่เลือกจาก QA3
-            });
-          }
-        }}
-        disabled={!(selectedDistance && butget)}
-      >
-        <Text style={styles.buttonText}>ถัดไป</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      style={[styles.arrowButton, !(selectedDistance && butget) && styles.buttonDisabled]}
+      onPress={() => {
+        if (selectedDistance && butget) {
+          navigation.navigate("QA4", {
+            selectedOption,
+            selectedPlan,
+            selectedDistance,
+            butget,
+          });
+        }
+      }}
+      disabled={!(selectedDistance && butget)}
+    >
+      <Ionicons name="arrow-forward-circle" size={40} color={selectedDistance && butget ? "#5893d8" : "#999"} />
+    </TouchableOpacity>
+  </ImageBackground>
+</View>
+
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    position: "relative",
+  },
   container: {
     flex: 1,
-    backgroundColor: Color.colorWhite,
+    position: "relative",
+    zIndex: 0,
   },
   scrollContainer: {
-    paddingBottom: 100, // ป้องกันปุ่มถูกบัง
+    paddingBottom: 100,
+  },
+  detailContainer: {
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 20,
-    fontFamily: FontFamily.nunitoBold,
+    fontSize: 36,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
-    marginBottom: 10,
+    marginBottom: 20,
     textAlign: "center",
   },
   optionGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",
-    marginBottom: 10,
+    justifyContent: "space-between",
+    marginVertical: 20,
   },
   option: {
     width: "45%",
-    marginHorizontal: 5,
-    marginVertical: 10,
+    marginBottom: 10,
     backgroundColor: Color.colorWhitesmoke_100,
     paddingVertical: 12,
     borderRadius: Border.br_base,
@@ -150,10 +170,16 @@ const styles = StyleSheet.create({
   optionSelected: {
     borderColor: Color.colorCornflowerblue,
     backgroundColor: Color.colorCornflowerblue,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    transform: [{ scale: 1.05 }],
   },
   optionText: {
     fontSize: FontSize.size_mini,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
   },
   optionTextSelected: {
@@ -175,35 +201,32 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: FontSize.size_mini,
   },
-  nextButton: {
-    backgroundColor: Color.colorCornflowerblue,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: Border.br_base,
-    alignItems: "center",
+  arrowButton: {
     position: "absolute",
-    bottom: 40,
-    right: 20,
+    top: 50,
+    right: 40,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
   },
   backButton: {
-    backgroundColor: Color.colorDimgray,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: Border.br_base,
-    alignItems: "center",
     position: "absolute",
-    bottom: 40,
-    left: 20,
+    top: 50,
+    left: 40,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
   },
   buttonDisabled: {
-    backgroundColor: Color.colorGray_100,
-  },
-  buttonText: {
-    fontSize: FontSize.m3LabelMedium_size,
-    fontFamily: FontFamily.nunitoBold,
-    fontWeight: "700",
-    color: Color.colorWhite,
+    opacity: 0.5,
   },
 });
+
 
 export default QA3;

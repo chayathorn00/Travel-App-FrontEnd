@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  ImageBackground,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -18,6 +19,7 @@ import Header from "../component/Header";
 import Progress from "../component/Progress";
 import Check from "../assets/check.svg";
 import { BASE_URL } from "../config";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const QA4 = () => {
   const navigation =
@@ -54,120 +56,164 @@ const QA4 = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView />
-      <Header page="4" />
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <View style={styles.wrapper}>
+  <ImageBackground
+    source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
+    style={styles.container}
+    imageStyle={{ opacity: 0.7 }}
+    resizeMode="cover"
+  >
+    <SafeAreaView />
+    <Header page="4" />
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.detailContainer}>
         <Progress progress="100" />
-        <Text style={styles.title}>กิจกรรมหรือความสนใจของคุณ</Text>
+        <Text style={styles.title}>กิจกรรมหรือความสนใจ</Text>
 
         {loading ? (
           <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
         ) : (
           <View style={styles.optionGrid}>
-            {activities.map((activity) => (
-              <TouchableOpacity
-                key={activity.id}
-                style={[
-                  styles.option,
-                  selectedActivities.includes(activity.id) && styles.optionSelected,
-                ]}
-                onPress={() => toggleActivity(activity.id)}
-              >
-                {selectedActivities.includes(activity.id) && (
-                  <Check width={16} height={16} />
-                )}
-                <Text
-                  style={[
-                    styles.optionText,
-                    selectedActivities.includes(activity.id) && styles.optionTextSelected,
-                  ]}
-                >
-                  {activity.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {activities
+              .filter((activity) => activity.id !== "custom")
+              .map((activity) => {
+                const isSelected = selectedActivities.includes(activity.id);
+                return (
+                  <TouchableOpacity
+                    key={activity.id}
+                    style={[styles.option, isSelected && styles.optionSelected]}
+                    onPress={() => toggleActivity(activity.id)}
+                  >
+                    {isSelected && <Check width={16} height={16} />}
+                    <Text
+                      style={[styles.optionText, isSelected && styles.optionTextSelected]}
+                    >
+                      {activity.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
           </View>
         )}
 
-        {selectedActivities.includes("custom") && (
+        <TouchableOpacity
+          style={[
+            styles.customOption,
+            selectedActivities.includes("custom") && styles.optionSelected,
+          ]}
+          onPress={() => toggleActivity("custom")}
+        >
+          <Text
+            style={[
+              styles.optionText,
+              selectedActivities.includes("custom") && styles.optionTextSelected,
+            ]}
+          >
+            กำหนดกิจกรรมเอง
+          </Text>
+          {selectedActivities.includes("custom") && (
           <TextInput
             style={styles.input}
             placeholder="ระบุกิจกรรมของคุณ"
             placeholderTextColor={Color.colorGray_200}
             value={customActivity}
-            onChangeText={(text) => setCustomActivity(text)}
-            keyboardType="default"
-            autoCapitalize="none"
+            onChangeText={setCustomActivity}
           />
         )}
-      </ScrollView>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
 
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>กลับ</Text>
-      </TouchableOpacity>
+    {/* ปุ่มย้อนกลับ */}
+    <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <Ionicons name="arrow-back-circle" size={40} color="#5893d8" />
+    </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.doneButton, selectedActivities.length < 3 && styles.buttonDisabled]}
-        onPress={() => {
-          if (selectedActivities.length >= 3) {
-            navigation.navigate("Loading", {
-              selectedOption,
-              selectedPlan,
-              selectedDistance,
-              butget,
-              selectedActivities
-            });
-          }
-        }}
-        disabled={selectedActivities.length < 3}
-      >
-        <Text style={styles.buttonText}>ถัดไป</Text>
-      </TouchableOpacity>
-    </View>
+    {/* ปุ่มถัดไป */}
+    <TouchableOpacity
+      style={[
+        styles.arrowButton,
+        selectedActivities.length < 3 && styles.buttonDisabled,
+      ]}
+      onPress={() => {
+        if (selectedActivities.length >= 3) {
+          navigation.navigate("Loading", {
+            selectedOption,
+            selectedPlan,
+            selectedDistance,
+            butget,
+            selectedActivities,
+          });
+        }
+      }}
+      disabled={selectedActivities.length < 3}
+    >
+      <Ionicons
+        name="arrow-forward-circle"
+        size={40}
+        color={selectedActivities.length >= 3 ? "#5893d8" : "#999"}
+      />
+    </TouchableOpacity>
+  </ImageBackground>
+</View>
+
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    position: "relative",
+  },
   container: {
     flex: 1,
-    backgroundColor: Color.colorWhite,
+    position: "relative",
+    zIndex: 0,
   },
   scrollContainer: {
     paddingBottom: 100,
   },
+  detailContainer: {
+    paddingHorizontal: 20,
+  },
   title: {
-    fontSize: 20,
-    fontFamily: FontFamily.nunitoBold,
+    fontSize: 36,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
-    marginBottom: 10,
+    marginBottom: 30,
     textAlign: "center",
   },
   optionGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    marginVertical: 20,
   },
   option: {
-    width: "40%",
+    width: "47%",
     backgroundColor: Color.colorWhitesmoke_100,
-    paddingVertical: 12,
+    paddingVertical: 23,
     borderRadius: Border.br_base,
     alignItems: "center",
-    borderWidth: 2,
+    marginBottom: 20,
+    borderWidth: 1,
     borderColor: "transparent",
-    marginHorizontal: 10,
-    marginVertical: 10,
     flexDirection: "row",
     justifyContent: "center",
   },
   optionSelected: {
     borderColor: Color.colorCornflowerblue,
     backgroundColor: Color.colorCornflowerblue,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    transform: [{ scale: 1.05 }],
   },
   optionText: {
-    fontSize: 13,
-    fontFamily: FontFamily.nunitoBold,
+    fontSize: 17,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
     marginLeft: 4,
   },
@@ -175,46 +221,58 @@ const styles = StyleSheet.create({
     color: Color.colorWhite,
   },
   input: {
-    marginTop: 10,
-    padding: 10,
-    borderWidth: 1,
+    marginTop: 1,
+    padding: 20,
+    borderWidth: 3,
     borderColor: Color.colorGray_200,
     borderRadius: Border.br_base,
     fontSize: FontSize.m3LabelMedium_size,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
     backgroundColor: Color.colorWhite,
-    marginHorizontal: 20,
+    marginHorizontal: 15,
   },
-  doneButton: {
-    backgroundColor: Color.colorCornflowerblue,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: Border.br_base,
-    alignItems: "center",
+  arrowButton: {
     position: "absolute",
-    bottom: 40,
-    right: 20,
-  },
-  buttonDisabled: {
-    backgroundColor: Color.colorGray_100,
-  },
-  buttonText: {
-    fontSize: FontSize.m3LabelMedium_size,
-    fontFamily: FontFamily.nunitoBold,
-    fontWeight: "700",
-    color: Color.colorWhite,
+    top: 50,
+    right: 40,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
   },
   backButton: {
-    backgroundColor: Color.colorDimgray,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    position: "absolute",
+    top: 50,
+    left: 40,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  customOption: {
+    width: "85%",
+    backgroundColor: Color.colorWhitesmoke_100,
+    paddingVertical: 15,
     borderRadius: Border.br_base,
     alignItems: "center",
-    position: "absolute",
-    bottom: 40,
-    left: 20,
+    borderWidth: 2,
+    borderColor: "transparent",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: 10,
+    marginBottom: 20,
   },
+  
 });
+
 
 export default QA4;

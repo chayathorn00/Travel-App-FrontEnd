@@ -21,6 +21,8 @@ import {jwtDecode} from "jwt-decode";
 import axios from "axios";
 import { BASE_URL } from "../config";
 import * as Location from "expo-location";
+import { ImageBackground } from "react-native"; // เพิ่ม import นี้
+
 
 type DecodedToken = {
   account_id: number;
@@ -150,23 +152,29 @@ const HomePage = () => {
       );
     }
 
-  return (
-    <View style={styles.container}>
+    return (
+      <ImageBackground
+        source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
+        style={styles.container}
+        imageStyle={{ opacity: 0.7 }}
+        resizeMode="cover"
+      >
+    
       <SafeAreaView />
       {/* Header */}
       <View style={styles.header}>
         {/* Avatar พร้อมกดเพื่อไปหน้า Profile */}
-        <View>
-        <Image
-          source={
-            profile?.account_picture
-              ? { uri: profile.account_picture } // ✅ ใช้ URL ถ้ามีข้อมูล
-              : require("../assets/3d-avatars--9.png") // ✅ ใช้รูปเดิมถ้าไม่มีข้อมูล
-          }
-          style={styles.avatar}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          <Image
+            source={
+              profile?.account_picture
+                ? { uri: profile.account_picture }
+                : require("../assets/3d-avatars--9.png")
+            }
+            style={styles.avatar}
+          />
+        </TouchableOpacity>
 
-        </View>
 
         <View>
           <Text style={styles.username}>{profile?.account_name || "ไม่ระบุ"}</Text>
@@ -263,46 +271,45 @@ const HomePage = () => {
           style={styles.surveyButton}
           onPress={() => navigation.navigate("QA1")} // ไปที่แบบสอบถาม
         >
-          <Text style={styles.surveyText}>เริ่มทำแบบสอบถาม</Text>
+          <Text style={styles.surveyText}>เริ่มใช้ AI</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorWhite,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
     paddingBottom: 20,
-    paddingTop: 40,
+    paddingTop: 60,
     borderBottomColor: Color.colorWhitesmoke_100,
   },
   avatar: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     borderRadius: 25,
     marginRight: 15,
   },
   username: {
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
+    fontSize: 26,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
   },
   email: {
     fontSize: FontSize.size_mini,
-    fontFamily: FontFamily.nunitoRegular,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.gray1,
   },
   title: {
     fontSize: FontSize.size_base,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
   },
   scrollView: {
@@ -322,8 +329,8 @@ const styles = StyleSheet.create({
     height: 200,
   },
   surveyButton: {
-    width: "50%",
-    marginTop: 30,
+    width: "30%",
+    marginTop: 60,
     backgroundColor: Color.colorCornflowerblue,
     paddingVertical: 12,
     paddingHorizontal: 20,
@@ -332,14 +339,14 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   surveyText: {
-    fontSize: FontSize.size_base,
-    fontFamily: FontFamily.nunitoBold,
+    fontSize: 20,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
   categoryContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 60,
     backgroundColor: Color.colorWhitesmoke_100,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -348,7 +355,7 @@ const styles = StyleSheet.create({
   category: {
     backgroundColor: Color.colorWhite,
     paddingVertical: 4,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     borderRadius: Border.br_81xl,
     marginVertical: 4,
     shadowColor: Color.colorBlack,
@@ -362,8 +369,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   categoryText: {
-    fontSize: FontSize.size_mini,
-    fontFamily: FontFamily.nunitoSemiBold,
+    fontSize: 17,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
   },
   resultButton: {
@@ -375,7 +382,7 @@ const styles = StyleSheet.create({
   },
   resultText: {
     fontSize: FontSize.size_base,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
   recommaendContainner: {

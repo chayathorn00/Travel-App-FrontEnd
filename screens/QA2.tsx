@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  ImageBackground,
 } from "react-native";
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -20,12 +21,13 @@ import Team from "../assets/family.svg";
 import Heart from "../assets/Heart.svg";
 import Friend from "../assets/users-profiles-01.svg";
 import { BASE_URL } from "../config";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const QA2 = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, "QA2">>();
   const route = useRoute<RouteProp<RootStackParamList, "QA2">>();
-  const { selectedOption } = route.params; // ✅ รับค่าจาก QA1
+  const { selectedOption } = route.params;
 
   const [travelPlans, setTravelPlans] = useState<
     { traveling_id: number; traveling_choice: string }[]
@@ -44,143 +46,167 @@ const QA2 = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView />
-      <Header page="2" />
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.optionContainer}>
-          <Progress progress="50" />
-          <Text style={styles.title}>{`คุณกำลังวางแผน\nการเดินทางแบบไหน?`}</Text>
-          <View style={styles.optionGrid}>
-            {travelPlans.map((plan, index) => (
-              <TouchableOpacity
-                key={plan.traveling_id}
-                style={[
-                  styles.option,
-                  selectedPlan === plan.traveling_id && styles.optionSelected,
-                ]}
-                onPress={() => setSelectedPlan(plan.traveling_id)}
-              >
-                {index === 0 ? (
-                  <UserProfile width={24} height={24} stroke={selectedPlan === plan.traveling_id ? Color.colorWhite : Color.colorBlack} />
-                ) : index === 1 ? (
-                  <Team width={24} height={24} stroke={selectedPlan === plan.traveling_id ? Color.colorWhite : Color.colorBlack} />
-                ) : index === 2 ? (
-                  <Heart width={24} height={24} stroke={selectedPlan === plan.traveling_id ? Color.colorWhite : Color.colorBlack} />
-                ) : (
-                  <Friend width={24} height={24} stroke={selectedPlan === plan.traveling_id ? Color.colorWhite : Color.colorBlack} />
-                )}
-
-                <Text style={[styles.optionText, selectedPlan === plan.traveling_id && styles.optionTextSelected]}>
-                  {plan.traveling_choice}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      </ScrollView>
-
-      {/* ปุ่มกลับ */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>กลับ</Text>
-      </TouchableOpacity>
-
-      {/* ปุ่มต่อไป */}
-      <TouchableOpacity
-        style={[styles.nextButton, !selectedPlan && styles.buttonDisabled]}
-        onPress={() => {
-          if (selectedPlan) {
-            navigation.navigate("QA3", {
-              selectedOption, // ✅ ส่งค่าที่เลือกจาก QA1
-              selectedPlan, // ✅ ส่งค่าที่เลือกจาก QA2
-            });
-          }
-        }}
-        disabled={!selectedPlan}
+    <View style={styles.wrapper}>
+      <ImageBackground
+        source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
+        style={styles.container}
+        imageStyle={{ opacity: 0.7 }}
+        resizeMode="cover"
       >
-        <Text style={styles.buttonText}>ถัดไป</Text>
-      </TouchableOpacity>
+        <SafeAreaView />
+        <Header page="2" />
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.detailContainer}>
+            <Progress progress="50" />
+            <Text style={styles.title}>{`คุณกำลังวางแผน\nการเดินทางแบบไหน?`}</Text>
+            <View style={styles.optionGrid}>
+              {travelPlans.map((plan, index) => {
+                const isSelected = selectedPlan === plan.traveling_id;
+                const IconComponent =
+                  index === 0 ? UserProfile :
+                  index === 1 ? Team :
+                  index === 2 ? Heart : Friend;
+
+                return (
+                  <TouchableOpacity
+                    key={plan.traveling_id}
+                    style={[
+                      styles.option,
+                      isSelected && styles.optionSelected,
+                    ]}
+                    onPress={() => setSelectedPlan(plan.traveling_id)}
+                  >
+                    <IconComponent
+                      width={24}
+                      height={24}
+                      stroke={isSelected ? Color.colorWhite : Color.colorBlack}
+                    />
+                    <Text
+                      style={[
+                        styles.optionText,
+                        isSelected && styles.optionTextSelected,
+                      ]}
+                    >
+                      {plan.traveling_choice}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        </ScrollView>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back-circle" size={40} color="#5893d8" />
+        </TouchableOpacity>
+
+
+        <TouchableOpacity
+          style={[styles.arrowButton, !selectedPlan && styles.buttonDisabled]}
+          onPress={() => {
+            if (selectedPlan) {
+              navigation.navigate("QA3", {
+                selectedOption,
+                selectedPlan,
+              });
+            }
+          }}
+          disabled={!selectedPlan}
+        >
+          
+          <Ionicons name="arrow-forward-circle" size={40} color={selectedPlan ? "#5893d8" : "#999"} />
+        </TouchableOpacity>
+      </ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    position: "relative",
+  },
   container: {
     flex: 1,
-    backgroundColor: Color.colorWhite,
+    position: "relative",
+    zIndex: 0,
   },
   scrollContainer: {
-    paddingBottom: 100, // ป้องกันปุ่มถูกบัง
+    paddingBottom: 100,
+  },
+  detailContainer: {
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 20,
-    fontFamily: FontFamily.nunitoBold,
+    fontSize: 36,
+    fontFamily: FontFamily.EkkamaiNewBold,
     color: Color.colorBlack,
-    marginBottom: 10,
+    marginBottom: 20,
     textAlign: "center",
   },
-  optionContainer: {
-    width: "100%",
-    alignItems: "center",
+  optionGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginVertical: 20,
   },
   option: {
-    width: "43%",
+    width: "45%",
     backgroundColor: Color.colorWhitesmoke_100,
     paddingVertical: 24,
     borderRadius: Border.br_base,
     alignItems: "center",
-    marginHorizontal: 10,
-    marginVertical: 5,
+    marginBottom: 3,
     borderWidth: 2,
     borderColor: "transparent",
   },
   optionSelected: {
     borderColor: Color.colorCornflowerblue,
     backgroundColor: Color.colorCornflowerblue,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    transform: [{ scale: 1.05 }],
   },
   optionText: {
     fontSize: FontSize.size_mini,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
-  },
-  optionGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    marginBottom: 10,
-  },
-  nextButton: {
-    backgroundColor: Color.colorCornflowerblue,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: Border.br_base,
-    alignItems: "center",
-    position: "absolute",
-    bottom: 40,
-    right: 20,
-  },
-  backButton: {
-    backgroundColor: Color.colorDimgray,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: Border.br_base,
-    alignItems: "center",
-    position: "absolute",
-    bottom: 40,
-    left: 20,
-  },
-  buttonDisabled: {
-    backgroundColor: Color.colorGray_100,
-  },
-  buttonText: {
-    fontSize: FontSize.m3LabelMedium_size,
-    fontFamily: FontFamily.nunitoBold,
-    fontWeight: "700",
-    color: Color.colorWhite,
+    marginTop: 10,
   },
   optionTextSelected: {
     color: Color.colorWhite,
   },
+  arrowButton: {
+    position: "absolute",
+    top: 50,
+    right: 40,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 40,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  
 });
 
 export default QA2;

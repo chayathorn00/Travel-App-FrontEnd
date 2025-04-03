@@ -4,6 +4,7 @@ import Close from "../assets/close.svg";
 import { useNavigation } from "@react-navigation/core";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
+import { Color, FontFamily, FontSize } from "../GlobalStyles";
 interface Props {
   page: string;
 }
@@ -26,7 +27,6 @@ export default Header;
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 1,
     paddingBottom: 10,
     marginBottom: 40,
   },
@@ -37,5 +37,7 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: "center",
+    fontFamily: FontFamily.KanitRegular,
+    fontSize: 23,
   },
 });

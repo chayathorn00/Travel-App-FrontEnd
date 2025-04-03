@@ -11,8 +11,23 @@ export const FontFamily = {
   montserratMedium: "Montserrat-Medium",
   montserratRegular: "Montserrat-Regular",
   oleoScriptSwashCapsRegular: "OleoScriptSwashCaps-Regular",
-  camper: "Camper",
   MNNangKaiThot: "MNNangKaiThot",
+  EkkamaiNewBold: "EkkamaiNew-Bold",
+  EkkamaiNewThin: "EkkamaiNew-Thin",
+  EkkamaiNewRegular: "EkkamaiNew-Regular",
+  PrintAble4UBoldItalic: "PrintAble4UBoldItalic",
+  PrintAble4UItalic: "PrintAble4UItalic",
+  PrintAble4URegular: "PrintAble4URegular",
+  PrintAble4UBold: "PrintAble4UBold",
+
+  KanitThin: "KanitThin",
+  KanitSemiBold: "KanitSemiBold",
+  KanitRegular: "KanitRegular",
+  KanitMedium: "KanitMedium",
+  KanitLight: "KanitLight",
+  KanitExtraBold: "KanitExtraBold",
+  KanitBold: "KanitBold",
+
 };
 /* font sizes */
 export const FontSize = {
@@ -20,15 +35,17 @@ export const FontSize = {
   size_base: 16,
   size_5xl: 24,
   m3LabelLarge_size: 14,
-  size_xl: 20,
+  size_xl: 30,
   size_2xs: 11,
-  size_lg: 18,
+  size_lg: 20,
   size_5xs: 8,
   size_8xs: 5,
   size_6xs: 7,
   size_3xs: 10,
-  size_mini: 15,
-  size_17xl: 36,
+  size_mini: 20,
+  size_17xl: 33,
+  size_lmap: 17,
+  size_optionText: 16,
 };
 /* Colors */
 export const Color = {

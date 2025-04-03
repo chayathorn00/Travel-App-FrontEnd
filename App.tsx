@@ -119,8 +119,26 @@ const App = () => {
     "Montserrat-Medium": require("./assets/fonts/Montserrat-Medium.ttf"),
     "Montserrat-Bold": require("./assets/fonts/Montserrat-Bold.ttf"),
     "OleoScriptSwashCaps-Regular": require("./assets/fonts/OleoScriptSwashCaps-Regular.ttf"),
-    "Camper": require("./assets/fonts/camper.ttf"),
     "MNNangKaiThot": require("./assets/fonts/MNNangKaiThot.ttf"),
+    "EkkamaiNew-Bold": require("./assets/fonts/EkkamaiNew-Bold.ttf"),
+    "EkkamaiNew-Thin": require("./assets/fonts/EkkamaiNew-Thin.ttf"),
+    "EkkamaiNew-Regular": require("./assets/fonts/EkkamaiNew-Regular.ttf"),
+    "PrintAble4UBoldItalic": require("./assets/fonts/PrintAble4UBoldItalic.ttf"),
+    "PrintAble4UItalic": require("./assets/fonts/PrintAble4UItalic.ttf"),
+    "PrintAble4URegular": require("./assets/fonts/PrintAble4URegular.ttf"),
+    "PrintAble4UBold": require("./assets/fonts/PrintAble4UBold.ttf"),
+    
+    "KanitThin": require("./assets/fonts/Kanit-Thin.ttf"),
+    "KanitSemiBold": require("./assets/fonts/Kanit-SemiBold.ttf"),
+    "KanitRegular": require("./assets/fonts/Kanit-Regular.ttf"),
+    "KanitMedium": require("./assets/fonts/Kanit-Medium.ttf"),
+    "KanitLight": require("./assets/fonts/Kanit-Light.ttf"),
+    "KanitExtraBold": require("./assets/fonts/Kanit-ExtraBold.ttf"),
+    "KanitBold": require("./assets/fonts/Kanit-Bold.ttf"),
+    
+
+
+
   });
 
   if (!fontsLoaded && !error) {

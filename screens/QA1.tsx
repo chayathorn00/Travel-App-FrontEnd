@@ -45,7 +45,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
       <ImageBackground
           source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
           style={styles.container}
-          imageStyle={{ opacity: 0.4 }} // ยิ่งน้อย = ยิ่งโปร่งแสง = ยิ่งดูสว่าง
+          imageStyle={{ opacity: 0.7 }} // ยิ่งน้อย = ยิ่งโปร่งแสง = ยิ่งดูสว่าง
           resizeMode="cover"
         >
 
@@ -54,7 +54,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.detailContainer}>
             <Progress progress="25" />
-            <Text style={styles.title}>ตอนนี้สนใจสถานที่ไหนบ้างเอ่ยย</Text>
+            <Text style={styles.title}>ตอนนี้คุณสนใจสถานที่ไหนบ้าง</Text>
 
             <View style={styles.imageGrid}>
               {places.map((place) => (
@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   title: {
-    fontSize: 36,
-    fontFamily: FontFamily.MNNangKaiThot,
+    fontSize: 30,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
     marginBottom: 20,
     textAlign: "center",
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: FontSize.m3LabelMedium_size,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.EkkamaiNewBold,
     fontWeight: "700",
     color: "#fff", // สีเข้มขึ้นให้ contrast
   },

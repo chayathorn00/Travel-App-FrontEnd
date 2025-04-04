@@ -91,7 +91,7 @@ const Result = () => {
         >
           <IcBack width={24} height={24} />
         </Pressable>
-        <Text style={styles.title}>สถานที่ที่เหมาะกับคุณ</Text>
+        <Text style={styles.title}>หวังว่าคุณจะชอบ :)</Text>
         <View />
       </View>
 
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 10,
     paddingTop: 60,
     borderBottomWidth: 0,
     borderBottomColor: Color.colorWhitesmoke_300,
@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontFamily: FontFamily.KanitRegular,
     textAlign: "center",
+    right: 10,
   },
   scrollView: {
     width: "100%",
@@ -201,12 +202,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   placeName: {
-    fontSize: FontSize.size_mini,
+    fontSize: 25,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
   },
   description: {
-    fontSize: FontSize.size_base,
+    fontSize: 17,
     fontFamily: FontFamily.KanitRegular,
     marginVertical: 5,
   },

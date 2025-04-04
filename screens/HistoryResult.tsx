@@ -29,6 +29,7 @@ type QAResult = {
   time_schedule: string;
   results_img_url: string;
   distance: string;
+  created_at: string;
 };
 
 const HistoryResult = () => {
@@ -80,6 +81,7 @@ const HistoryResult = () => {
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           qaResults
+          
             .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
             .slice(0, 10)
             .map((place) => (
@@ -91,15 +93,15 @@ const HistoryResult = () => {
               <View style={styles.infoContainer}>
                 <Text style={styles.placeName}>{place.event_name}</Text>
                 <Text style={styles.description}>{place.event_description}</Text>
-                <Text style={styles.description}>เวลาเปิด: {place.open_day}</Text>
-                <Text style={styles.description}>เวลา: {place.time_schedule}</Text>
+                <Text style={styles.description}>⏰เปิด: {place.open_day}</Text>
+                <Text style={styles.description}>⏰เวลา: {place.time_schedule}</Text>
                 <View style={styles.details}>
                   <MapIcon style={{ marginTop: 4 }} width={14} height={14} />
                   <Text style={styles.description}>
-                    {place.results_location}
+                  {place.results_location}
                   </Text>
                 </View>
-                <Text style={styles.description}>{place.distance}</Text>
+                <Text style={styles.description}>🚶{place.distance}</Text>
 
                 <TouchableOpacity
                   style={styles.routeButton}
@@ -186,12 +188,12 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   placeName: {
-    fontSize: FontSize.size_base,
+    fontSize: 25,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
   },
   description: {
-    fontSize: FontSize.size_base,
+    fontSize: 17,
     fontFamily: FontFamily.KanitRegular,
   },
   details: {

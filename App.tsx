@@ -64,6 +64,7 @@ export type RootStackParamList = {
     selectedActivities: string[];
     account_id: number; // ✅ เพิ่ม account_id
   };
+  
   ResultNearBy: {
     selectedOption: string;
     selectedPlan: number;

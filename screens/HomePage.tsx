@@ -361,7 +361,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 30,
-    borderBottomWidth: 1,
     paddingBottom: 20,
     paddingTop: 60,
     borderBottomColor: Color.colorWhitesmoke_300,

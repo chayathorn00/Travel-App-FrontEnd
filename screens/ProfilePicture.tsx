@@ -36,7 +36,7 @@ const ProfilePicture = () => {
   // ฟังก์ชันเลือกภาพจากแกลเลอรี่
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // ไม่มีปัญหาในเวอร์ชันปัจจุบัน
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,

@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderBottomWidth: 1,
     borderColor: "#ccc",
     paddingBottom: 10,
     paddingTop: 48,
@@ -79,5 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "center",
     fontFamily: FontFamily.KanitRegular,
+    fontSize: 20,
+    top: 1,
   },
 });

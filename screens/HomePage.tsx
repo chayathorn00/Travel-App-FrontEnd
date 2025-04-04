@@ -21,7 +21,8 @@ import {jwtDecode} from "jwt-decode";
 import axios from "axios";
 import { BASE_URL } from "../config";
 import * as Location from "expo-location";
-import { ImageBackground } from "react-native"; // เพิ่ม import นี้
+import { ImageBackground } from "react-native";
+import { useLayoutEffect } from "react";
 
 
 type DecodedToken = {
@@ -40,6 +41,7 @@ type ProfileData = {
   latitude: number;
   longitude: number;
 };
+
 
 const HomePage = () => {
   const [page, setPage] = useState<number>(0);

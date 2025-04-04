@@ -70,23 +70,19 @@ const LoadingNearBy = () => {
 
   return (
     <ImageBackground
-      source={require("../assets/bg_qa_1.jpg")}
-      style={styles.container}
-    >
-      <Image source={require("../assets/loading.gif")} style={styles.gif} />
-      {/* ข้อความ */}
-      <Text style={styles.title}>ขอให้สนุกกับการเดินทาง</Text>
-      <Text style={styles.subtitle}>
-        {`รอสักครู่ในการค้นหาสถานที่ที่เหมาะกับคุณโดย\n
-        AI จะทำการค้นหาสถานที่ที่เหมาะสมกับคุณ\n
-        ขอให้คุณเพลิดเพลินเเละสนุกกับทริปในครั้งนี้`}
-      </Text>
-
-      {/* แถบโหลด */}
-      {isLoading && (
-        <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
-      )}
-    </ImageBackground>
+          source={require("../assets/bg_qa_1.jpg")}
+          style={styles.container}
+        >
+          <Image source={require("../assets/loading.gif")} style={styles.gif} />
+          <Text style={styles.title}>ขอให้สนุกกับการเดินทาง</Text>
+          <Text style={styles.subtitle}>
+            {`รอสักครู่ AI กำลังประมวลผล\nเพื่อค้นหาสถานที่ที่เหมาะกับคุณ`}
+          </Text>
+    
+          {/* {isLoading && (
+            <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
+          )} */}
+        </ImageBackground>
   );
 };
 
@@ -103,10 +99,10 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 30,
   },
   subtitle: {
-    fontSize: FontSize.m3LabelMedium_size,
+    fontSize: 17,
     fontFamily: FontFamily.KanitRegular,
     color: "#858585",
     textAlign: "center",

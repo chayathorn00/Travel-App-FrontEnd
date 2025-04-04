@@ -19,6 +19,10 @@ import { RootStackParamList } from "../App";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import MapIcon from "../assets/map.svg";
 import { BASE_URL } from "../config";
+import IcBack from "../assets/ic_back.svg";
+import { Pressable } from "react-native";
+
+
 
 type QAResult = {
   results_id: number;
@@ -71,8 +75,15 @@ const HistoryResult = () => {
     >
       <SafeAreaView />
       <View style={styles.header}>
+        <Pressable
+          onPress={() => navigation.goBack()}
+          style={styles.backIcon}
+        >
+          <IcBack width={24} height={24} />
+        </Pressable>
         <Text style={styles.title}>ประวัติสถานที่ท่องเที่ยว</Text>
       </View>
+
 
       <ScrollView contentContainerStyle={styles.scrollView}>
         
@@ -113,26 +124,18 @@ const HistoryResult = () => {
             </View>
           ))
         )}
-
-        <TouchableOpacity
-          onPress={async () => {
-            const token = await AsyncStorage.getItem("userToken");
-            if (token) {
-              navigation.navigate("HomePage");
-            } else {
-              navigation.navigate("Auth");
-            }
-          }}
-          style={[styles.routeButton, styles.back]}
-        >
-          <Text style={styles.routeText}>กลับหน้าแรก</Text>
-        </TouchableOpacity>
       </ScrollView>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backIcon: {
+    position: "absolute",
+    left: 30,
+    top: 72,
+    zIndex: 10,
+  },  
   container: {
     flex: 1,
     backgroundColor: Color.colorWhite,

@@ -18,6 +18,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../App";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import MapIcon from "../assets/map.svg";
+import IcBack from "../assets/ic_back.svg";
+import { Pressable } from "react-native";
+
+
 
 const ResultNearBy = () => {
   const navigation =
@@ -51,12 +55,15 @@ const ResultNearBy = () => {
     >
       <SafeAreaView />
       <View style={styles.header}>
+        <Pressable
+          onPress={() => navigation.goBack()}
+          style={styles.backIcon}
+        >
+          <IcBack width={24} height={24} />
+        </Pressable>
         <Text style={styles.title}>สถานที่ใกล้คุณ</Text>
       </View>
-
       <ScrollView contentContainerStyle={styles.scrollView}>
-
-
         {/* 🔹 แสดงผลข้อมูลจาก API */}
         {places.map((place, index) => (
           <View key={index} style={styles.card}>
@@ -82,27 +89,19 @@ const ResultNearBy = () => {
             </View>
           </View>
         ))}
-
-        {/* ปุ่มกลับหน้าแรก */}
-        <TouchableOpacity
-          onPress={async () => {
-            const token = await AsyncStorage.getItem("userToken"); // ✅ ดึง Token ของผู้ใช้
-            if (token) {
-              navigation.navigate("HomePage"); // ✅ ถ้าเข้าสู่ระบบแล้ว ไปหน้า HomePage
-            } else {
-              navigation.navigate("Auth"); // ❌ ถ้ายังไม่ได้เข้าสู่ระบบ ไปหน้า Auth
-            }
-          }}
-          style={[styles.routeButton, styles.back]}
-        >
-          <Text style={styles.routeText}>กลับหน้าแรก</Text>
-        </TouchableOpacity>
       </ScrollView>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backIcon: {
+    position: "absolute",
+    left: 30,
+    top: 72,
+    zIndex: 10,
+  },
+  
   container: {
     flex: 1,
     backgroundColor: Color.colorWhite,
@@ -158,12 +157,12 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   placeName: {
-    fontSize: FontSize.size_base,
+    fontSize: 25,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
   },
   description: {
-    fontSize: FontSize.size_base,
+    fontSize: 17,
     fontFamily: FontFamily.KanitRegular,
   },
   details: {

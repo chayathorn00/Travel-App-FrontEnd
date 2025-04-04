@@ -279,7 +279,7 @@ const HomePage = () => {
         >
           <View style={{ marginTop: 20 }}>
             <View style={styles.recommaendContainner}>
-              <Text style={styles.title}>ประวัติการวิเคราะห์</Text>
+              <Text style={styles.title}>รสนิยมการเที่ยว</Text>
             </View>
             <Image
               source={require("../assets/history.png")}

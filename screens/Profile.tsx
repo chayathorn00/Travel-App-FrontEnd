@@ -619,12 +619,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
     textAlign: "right",
+    left: 0,
   },
   email: {
     fontSize: 17,
     fontFamily: FontFamily.KanitRegular,
     color: Color.gray1,
-    left: 39,
+    left: 0,
   },
   backText: {
     fontSize: FontSize.size_base,

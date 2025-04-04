@@ -68,6 +68,7 @@ const ProfileSettings = () => {
     const fetchProfile = async () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
+
         if (!token) {
           navigation.replace("Auth");
           return;
@@ -84,7 +85,8 @@ const ProfileSettings = () => {
         setGender(profile.account_gender || "none");
 
         if (profile.account_birthday) {
-          const [yearStr, monthStr, dayStr] = profile.account_birthday.split("-");
+          const [yearStr, monthStr, dayStr] =
+            profile.account_birthday.split("-");
           setDay(parseInt(dayStr, 10));
           setMonth(parseInt(monthStr, 10));
           setYear(parseInt(yearStr, 10));
@@ -136,15 +138,14 @@ const ProfileSettings = () => {
 
   if (loading) {
     return (
-      <View >
+      <View>
         <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
         <Text>กำลังโหลดข้อมูล...</Text>
       </View>
     );
   }
 
-  return (''
-  );
+  return "";
 };
 
 const styles = StyleSheet.create({
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
   content: {
@@ -187,14 +188,14 @@ const styles = StyleSheet.create({
   changeAvatarText: {
     fontSize: FontSize.size_mini,
     color: Color.colorCornflowerblue,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
   },
   inputContainer: {
     width: "90%",
   },
   label: {
     fontSize: FontSize.size_base,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
     marginBottom: 5,
   },
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     fontSize: FontSize.size_base,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
 });

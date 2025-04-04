@@ -7,9 +7,11 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Dimensions,
   Linking,
   ActivityIndicator,
   ImageBackground,
+  Pressable,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,9 +19,11 @@ import { RouteProp } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../App";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import MapIcon from "../assets/map.svg";
 import { BASE_URL } from "../config";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import IcBack from "../assets/ic_back.svg";
 
+// 🟢 ประกาศ Type สำหรับข้อมูลที่ดึงมา
 type ResultItem = {
   results_id: number;
   account_id: number;
@@ -36,17 +40,23 @@ const Result = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, "Result">>();
   const route = useRoute<RouteProp<RootStackParamList, "Result">>();
-  const { account_id } = route.params;
+  const { account_id } = route.params; // ✅ ดึงค่า account_id จาก params
 
+  // 🟢 สร้าง state สำหรับข้อมูลและสถานะโหลด
   const [filteredResults, setFilteredResults] = useState<ResultItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // 🔹 Fetch Data จาก API
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`${BASE_URL}/qa_results`);
         const data: ResultItem[] = await response.json();
-        const filteredData = data.filter((item) => item.account_id === account_id);
+
+        // ✅ กรองเฉพาะข้อมูลที่ account_id ตรงกัน
+        const filteredData = data.filter(
+          (item) => item.account_id === account_id
+        );
         setFilteredResults(filteredData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -58,36 +68,59 @@ const Result = () => {
     fetchData();
   }, [account_id]);
 
+  // 🔹 ฟังก์ชันเปิด Google Maps
   const openGoogleMaps = (location: string) => {
-    Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`);
+    Linking.openURL(
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        location
+      )}`
+    );
   };
 
   return (
-    
     <ImageBackground
-      source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
+      source={require("../assets/bg_qa_1.jpg")}
       style={styles.container}
-      imageStyle={{ opacity: 0.7 }}
-      resizeMode="cover"
     >
       <SafeAreaView />
       <View style={styles.header}>
+        <Pressable
+          onPress={async () => {
+            navigation.pop();
+          }}
+        >
+          <IcBack width={24} height={24} />
+        </Pressable>
         <Text style={styles.title}>สถานที่ที่เหมาะกับคุณ</Text>
+        <View />
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color={Color.colorCornflowerblue} style={styles.loading} />
+        <ActivityIndicator
+          size="large"
+          color={Color.colorCornflowerblue}
+          style={styles.loading}
+        />
       ) : (
         <ScrollView contentContainerStyle={styles.scrollView}>
           {filteredResults.length > 0 ? (
             filteredResults.map((place) => (
               <View key={place.results_id} style={styles.card}>
-                <Image source={{ uri: place.results_img_url }} style={styles.image} />
+                <Image
+                  source={{ uri: place.results_img_url }}
+                  style={styles.image}
+                />
                 <View style={styles.infoContainer}>
                   <Text style={styles.placeName}>{place.event_name}</Text>
-                  <Text style={styles.description}>{place.event_description}</Text>
-                  <Text style={styles.detailText}>📍 {place.results_location}</Text>
-                  <Text style={styles.detailText}>⏰ {place.time_schedule}</Text>
+                  <Text style={styles.description}>
+                    {place.event_description}
+                  </Text>
+                  <Text style={styles.detailText}>
+                    📍 {place.results_location}
+                  </Text>
+                  <Text style={styles.detailText}>
+                    ⏰ {place.time_schedule}
+                  </Text>
                   <Text style={styles.detailText}>🚶 {place.distance}</Text>
 
                   <TouchableOpacity
@@ -100,9 +133,12 @@ const Result = () => {
               </View>
             ))
           ) : (
-            <Text style={styles.noResult}>ไม่พบสถานที่ที่ตรงกับบัญชีของคุณ</Text>
+            <Text style={styles.noResult}>
+              ไม่พบสถานที่ที่ตรงกับบัญชีของคุณ
+            </Text>
           )}
 
+          {/* ปุ่มกลับหน้าแรก */}
           <TouchableOpacity
             onPress={async () => {
               const token = await AsyncStorage.getItem("userToken");
@@ -118,10 +154,6 @@ const Result = () => {
           </TouchableOpacity>
         </ScrollView>
       )}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-  <Ionicons name="arrow-back-circle" size={40} color="#5893d8" />
-</TouchableOpacity>
-
     </ImageBackground>
   );
 };
@@ -129,81 +161,75 @@ const Result = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Color.colorWhite,
   },
   header: {
-    paddingHorizontal: 0,
-    paddingVertical: 10,
-    paddingTop: 66,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    paddingTop: 60,
     borderBottomWidth: 0,
-    borderBottomColor: Color.colorWhitesmoke_100,
-    backgroundColor: "rgba(255, 255, 255, 0)",
+    borderBottomColor: Color.colorWhitesmoke_300,
   },
   title: {
-    fontSize: FontSize.size_17xl,
+    fontSize: 30,
     fontFamily: FontFamily.KanitRegular,
     textAlign: "center",
-    color: Color.colorBlack,
   },
   scrollView: {
     width: "100%",
     paddingHorizontal: 20,
     paddingTop: 30,
-    paddingBottom: 10,
   },
   card: {
-    backgroundColor: "rgba(255, 255, 255, 0.75)",
+    backgroundColor: Color.colorWhitesmoke_200,
     borderRadius: Border.br_base,
     marginBottom: 20,
     overflow: "hidden",
+    elevation: 16,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
   },
   image: {
     width: "100%",
     height: 200,
   },
   infoContainer: {
-    padding: 15,
+    backgroundColor: Color.colorWhitesmoke_200,
+    padding: 16,
   },
   placeName: {
-    fontSize: FontSize.size_5xl,
+    fontSize: FontSize.size_mini,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
-    marginBottom: 4,
   },
   description: {
-    fontSize: FontSize.size_mini,
+    fontSize: FontSize.size_base,
     fontFamily: FontFamily.KanitRegular,
     marginVertical: 5,
-    color: "#444",
   },
   detailText: {
-    fontSize: FontSize.size_mini,
+    fontSize: FontSize.size_base,
     fontFamily: FontFamily.KanitRegular,
     marginTop: 2,
-    color: "#333",
   },
   routeButton: {
     backgroundColor: Color.colorCornflowerblue,
     paddingVertical: 10,
     borderRadius: Border.br_base,
     alignItems: "center",
-    width: "27%",
+    width: "50%",
     alignSelf: "center",
     marginTop: 10,
   },
   routeText: {
-    fontSize: FontSize.size_lmap,//size17
+    fontSize: FontSize.size_base,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
   back: {
-    width: "40%",
-    backgroundColor: Color.colorCornflowerblue,
-    marginTop: 30,
     marginBottom: 40,
   },
   noResult: {
@@ -218,18 +244,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  backButton: {
-    position: "absolute",
-    top: 72,
-    left: 20,
-    zIndex: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  
 });
 
 export default Result;

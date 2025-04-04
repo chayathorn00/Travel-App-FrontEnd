@@ -9,20 +9,19 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Alert,
+  ImageBackground,
 } from "react-native";
 import { useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation,useFocusEffect  } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App"; // นำเข้า Type ของ Stack Navigator
 import { Color, FontFamily, FontSize, Border, Padding } from "../GlobalStyles";
 import "core-js/stable/atob";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { BASE_URL } from "../config";
 import * as Location from "expo-location";
-import { ImageBackground } from "react-native";
-import { useLayoutEffect } from "react";
 
 
 type DecodedToken = {
@@ -42,7 +41,6 @@ type ProfileData = {
   longitude: number;
 };
 
-
 const HomePage = () => {
   const [page, setPage] = useState<number>(0);
   const [email, setEmail] = useState<string | null>(null);
@@ -55,39 +53,36 @@ const HomePage = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-    useEffect(() => {
-      const fetchProfile = async () => {
-        try {
-          const token = await AsyncStorage.getItem("userToken");
-          if (!token) {
-            console.warn("❌ No Token Found. Redirecting to Auth.");
-            navigation.replace("Auth");
-            return;
-          }
-    
-          const decoded: DecodedToken = jwtDecode(token);
-          console.log("📩 JWT Payload:", decoded);
-    
-          const response = await axios.get(
-            `${BASE_URL}/accounts_list/${decoded.account_id}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-    
-          console.log("📩 response:", response.data);
-          setProfile(response.data); // ✅ อัปเดตโปรไฟล์
-        } catch (err) {
-          setError("ไม่สามารถโหลดข้อมูลได้");
-          console.error("❌ Profile Fetch Error:", err);
-        } finally {
-          setLoading(false);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.warn("❌ No Token Found. Redirecting to Auth.");
+          navigation.replace("Auth");
+          return;
         }
-      };
-    
-      fetchProfile();
-    }, []);
-    
+        const decoded: DecodedToken = jwtDecode(token);
+        console.log("📩 JWT Payload:", decoded);
+        const response = await axios.get(
+          `${BASE_URL}/accounts_list/${decoded.account_id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        console.log("📩 response:", response.data);
+        setProfile(response.data); // ✅ อัปเดตโปรไฟล์
+      } catch (err) {
+        setError("ไม่สามารถโหลดข้อมูลได้");
+        console.error("❌ Profile Fetch Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
   useEffect(() => {
     const fetchLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -101,12 +96,16 @@ const HomePage = () => {
         accuracy: Location.Accuracy.High,
       });
 
-      console.log("📌 ได้รับพิกัด:", location.coords.latitude, location.coords.longitude);
+      console.log(
+        "📌 ได้รับพิกัด:",
+        location.coords.latitude,
+        location.coords.longitude
+      );
       setLatitude(location.coords.latitude);
       setLongitude(location.coords.longitude);
     };
 
-    fetchLocation()
+    fetchLocation();
   }, []);
 
   // ✅ ตรวจสอบ Token และ Email เมื่อหน้าโหลด
@@ -132,58 +131,96 @@ const HomePage = () => {
   }, []);
 
   const data = ["ภาคกลาง", "ภาคเหนือ", "ภาคใต้", "ภาคตะวันออก"];
-
+  const fetchProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        console.warn("❌ No Token Found. Redirecting to Auth.");
+        navigation.replace("Auth");
+        return;
+      }
+      const decoded: DecodedToken = jwtDecode(token);
+      const response = await axios.get(
+        `${BASE_URL}/accounts_list/${decoded.account_id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setProfile(response.data);
+    } catch (err) {
+      setError("ไม่สามารถโหลดข้อมูลได้");
+      console.error("❌ Profile Fetch Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile(); // โหลดข้อมูลใหม่เมื่อเข้าหน้านี้
+    }, [])
+  );
+  
+  
   const changeTab = (tab: number) => {
     setPage(tab);
   };
 
   if (loading) {
-      return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
-          <Text style={styles.loadingText}>กำลังโหลดข้อมูล...</Text>
-        </View>
-      );
-    }
-  
-    if (error) {
-      return (
-        <View style={styles.loadingContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      );
-    }
-
     return (
-      <ImageBackground
-        source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
-        style={styles.container}
-        imageStyle={{ opacity: 0.7 }}
-        resizeMode="cover"
-      >
-    
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
+        <Text style={styles.loadingText}>กำลังโหลดข้อมูล...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <ImageBackground
+      source={require("../assets/bg_qa_1.jpg")}
+      style={styles.container}
+    >
       <SafeAreaView />
       {/* Header */}
-      <View style={styles.header}>
-        {/* Avatar พร้อมกดเพื่อไปหน้า Profile */}
-        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <Image
-            source={
-              profile?.account_picture
-                ? { uri: profile.account_picture }
-                : require("../assets/3d-avatars--9.png")
-            }
-            style={styles.avatar}
-          />
-        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Profile");
+        }}
+        activeOpacity={0.7}
+      >
+        <View style={styles.header}>
+          {/* Avatar พร้อมกดเพื่อไปหน้า Profile */}
+          <View>
+            <Image
+              source={
+                profile?.account_picture
+                  ? { uri: profile.account_picture } // ✅ ใช้ URL ถ้ามีข้อมูล
+                  : require("../assets/3d-avatars--9.png") // ✅ ใช้รูปเดิมถ้าไม่มีข้อมูล
+              }
+              style={styles.avatar}
+            />
+          </View>
 
+          <View>
+          <Text style={styles.username}>
+            {profile?.account_name && profile.account_name.trim() !== ""
+              ? profile.account_name
+              : "ไม่ระบุ"}
+          </Text>
 
-        <View>
-          <Text style={styles.username}>{profile?.account_name || "ไม่ระบุ"}</Text>
-          <Text style={styles.email}>{profile?.account_email || "ไม่พบอีเมล"}</Text>
+            <Text style={styles.email}>
+              {profile?.account_email || "ไม่พบอีเมล"}
+            </Text>
+          </View>
         </View>
-      </View>
-
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollView}>
         {/* รูปภาพแนะนำสถานที่ */}
 
@@ -191,13 +228,18 @@ const HomePage = () => {
           onPress={() => {
             const finalLatitude = latitude || profile?.latitude;
             const finalLongitude = longitude || profile?.longitude;
-        
-            if (finalLatitude && finalLongitude && finalLatitude !== 0 && finalLongitude !== 0) {
+
+            if (
+              finalLatitude &&
+              finalLongitude &&
+              finalLatitude !== 0 &&
+              finalLongitude !== 0
+            ) {
               navigation.navigate("LoadingNearBy", {
-                selectedOption: 0,
+                selectedOption: "0",
                 selectedPlan: 0,
                 selectedDistance: 0,
-                butget: 0,
+                butget: "0",
                 selectedActivities: [],
               });
             } else {
@@ -208,15 +250,43 @@ const HomePage = () => {
         >
           <View>
             <View style={styles.recommaendContainner}>
-              <Text style={styles.title}>เหมาะกับคุณ</Text>
+              <Text style={styles.title}>ใกล้กับคุณ</Text>
             </View>
             <Image
-              source={require("../assets/image-16.png")}
+              source={require("../assets/nearby.png")}
               style={styles.image}
             />
           </View>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          onPress={() => {
+            const finalLatitude = latitude || profile?.latitude;
+            const finalLongitude = longitude || profile?.longitude;
+
+            if (
+              finalLatitude &&
+              finalLongitude &&
+              finalLatitude !== 0 &&
+              finalLongitude !== 0
+            ) {
+              navigation.navigate("HistoryResult");
+            } else {
+              Alert.alert("ตำแหน่งไม่พร้อม", "กรุณาอัพเดทตำแหน่งในหน้าโปรไฟล์");
+            }
+          }}
+          activeOpacity={0.7}
+        >
+          <View style={{ marginTop: 20 }}>
+            <View style={styles.recommaendContainner}>
+              <Text style={styles.title}>ประวัติการวิเคราะห์</Text>
+            </View>
+            <Image
+              source={require("../assets/history.png")}
+              style={styles.image}
+            />
+          </View>
+        </TouchableOpacity>
 
         {/* หมวดหมู่ */}
         <View style={styles.categoryContainer}>
@@ -242,22 +312,22 @@ const HomePage = () => {
         </View>
         {page === 0 ? (
           <Image
-            source={require("../assets/image-29.png")}
+            source={require("../assets/center.png")}
             style={styles.imageContent}
           />
         ) : page === 1 ? (
           <Image
-            source={require("../assets/image-16.png")}
+            source={require("../assets/north.png")}
             style={styles.imageContent}
           />
         ) : page === 2 ? (
           <Image
-            source={require("../assets/image-29.png")}
+            source={require("../assets/south.png")}
             style={styles.imageContent}
           />
         ) : (
           <Image
-            source={require("../assets/image-16.png")}
+            source={require("../assets/east.png")}
             style={styles.imageContent}
           />
         )}
@@ -273,25 +343,28 @@ const HomePage = () => {
           style={styles.surveyButton}
           onPress={() => navigation.navigate("QA1")} // ไปที่แบบสอบถาม
         >
-          <Text style={styles.surveyText}>เริ่มใช้ AI</Text>
+          <Text style={styles.surveyText}>เริ่มทำแบบสอบถาม</Text>
         </TouchableOpacity>
       </ScrollView>
     </ImageBackground>
   );
 };
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Color.colorWhite,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
-    borderBottomWidth: 0,
+    paddingHorizontal: 30,
+    borderBottomWidth: 1,
     paddingBottom: 20,
     paddingTop: 60,
-    borderBottomColor: Color.colorWhitesmoke_100,
+    borderBottomColor: Color.colorWhitesmoke_300,
   },
   avatar: {
     width: 70,
@@ -300,13 +373,13 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   username: {
-    fontSize: 26,
+    fontSize: 25,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
   },
   email: {
-    fontSize: FontSize.size_mini,
-    fontFamily: FontFamily.KanitRegular,
+    fontSize: 17,
+    fontFamily: FontFamily.nunitoRegular,
     color: Color.gray1,
   },
   title: {
@@ -315,7 +388,7 @@ const styles = StyleSheet.create({
     color: Color.colorBlack,
   },
   scrollView: {
-    paddingHorizontal: 20,
+    padding: 24,
   },
   imageContainer: {
     marginTop: 40,
@@ -329,10 +402,12 @@ const styles = StyleSheet.create({
   imageContent: {
     width: "100%",
     height: 200,
+    borderBottomLeftRadius: Border.br_3xs,
+    borderBottomRightRadius: Border.br_3xs,
   },
   surveyButton: {
-    width: "30%",
-    marginTop: 60,
+    width: "50%",
+    marginTop: 30,
     backgroundColor: Color.colorCornflowerblue,
     paddingVertical: 12,
     paddingHorizontal: 20,
@@ -341,14 +416,14 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   surveyText: {
-    fontSize: 20,
+    fontSize: FontSize.size_base,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
   categoryContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 60,
+    marginTop: 20,
     backgroundColor: Color.colorWhitesmoke_100,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -356,7 +431,7 @@ const styles = StyleSheet.create({
   },
   category: {
     backgroundColor: Color.colorWhite,
-    paddingVertical: 4,
+    paddingVertical: 7,
     paddingHorizontal: 10,
     borderRadius: Border.br_81xl,
     marginVertical: 4,
@@ -367,7 +442,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
-
+    
     elevation: 4,
   },
   categoryText: {
@@ -390,12 +465,13 @@ const styles = StyleSheet.create({
   recommaendContainner: {
     position: "absolute",
     zIndex: 9,
-    backgroundColor: "#FFFFFFCC",
-    left: 4,
-    top: 4,
-    paddingVertical: 8,
-    borderRadius: 16,
-    paddingHorizontal: 16,
+    backgroundColor: "#FFFFFCCC",
+    left: 11,
+    top: 11,
+    paddingVertical: 10,
+    borderRadius: 50,
+    paddingHorizontal: 17,
+    
   },
   loadingContainer: {
     flex: 1,
@@ -411,8 +487,8 @@ const styles = StyleSheet.create({
     color: "red",
   },
   disabledButton: {
-    opacity: 0.5, 
-  }
+    opacity: 0.5,
+  },
 });
 
 export default HomePage;

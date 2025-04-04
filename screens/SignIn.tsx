@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   Platform,
+  Pressable,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ ใช้ AsyncStorage เก็บ Token
 import axios from "axios"; // ✅ ใช้ axios เรียก API
@@ -20,6 +21,7 @@ import EyeOn from "../assets/eye_on.svg";
 import EyeOff from "../assets/eye-off.svg";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { BASE_URL } from "../config";
+import IcBack from "../assets/ic_back.svg";
 
 const SignIn = () => {
   const navigation =
@@ -36,25 +38,25 @@ const SignIn = () => {
       Alert.alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
-  
+
     try {
       const response = await axios.post(`${BASE_URL}/signin`, {
         account_email: email,
         account_password: password,
       });
-  
+
       if (response.status === 200) {
         const token = response.data.token;
-  
+
         // ✅ บันทึก Token ลงใน AsyncStorage
         await AsyncStorage.setItem("userToken", token);
         await AsyncStorage.setItem("userEmail", email);
-        
+
         if (Platform.OS === "web") {
           window.location.href = "/"; // ✅ ใช้ window.location บน Web
-        }else{
+        } else {
           Alert.alert("เข้าสู่ระบบสำเร็จ!", "กำลังนำทางไปหน้า HomePage", [
-            { text: "ตกลง", onPress: () => navigation.replace("HomePage") }, 
+            { text: "ตกลง", onPress: () => navigation.replace("HomePage") },
           ]);
         }
       }
@@ -63,17 +65,24 @@ const SignIn = () => {
       console.error("Signin Error:", error);
     }
   };
-  
 
   return (
     <ImageBackground
-      source={require("../assets/glaciallakesgokyovillagenepaladapt-11901-2.png")}
+      source={require("../assets/singin.png")}
       style={styles.background}
       resizeMode="cover"
     >
       <View style={styles.overlay} />
+      <Pressable
+        onPress={() => {
+          navigation.navigate("Auth");
+        }}
+        style={styles.backBtn}
+      >
+        <IcBack width={24} height={24} />
+      </Pressable>
       <View>
-        <Text style={styles.title}>Sign In</Text>
+        <Text style={styles.title}>เข้าสู่ระบบ</Text>
 
         <View style={styles.container}>
           {/* Input Email */}
@@ -114,17 +123,7 @@ const SignIn = () => {
         <TouchableOpacity style={styles.buttonContainer} onPress={handleSignIn}>
           <Text style={styles.buttonText}>เข้าสู่ระบบ</Text>
         </TouchableOpacity>
-
-        {/* ปุ่ม Back */}
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.navigate("Auth")}
-        >
-          <Text style={styles.buttonText}>กลับ</Text>
-        </TouchableOpacity>
       </View>
-
-      
     </ImageBackground>
   );
 };
@@ -149,10 +148,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 36,
+    fontSize: 40,
     color: Color.colorWhite,
     marginBottom: 20,
-    fontWeight: "bold",
+    fontFamily: FontFamily.KanitRegular,
+    left: 103,
+    top: -25,
+    // fontWeight: "bold",
   },
   inputContainer: {
     flexDirection: "row",
@@ -164,18 +166,26 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderWidth: 1,
     borderColor: "#00000038",
+    elevation: 10,
+    shadowColor: "#000",
+  },
+  backBtn: {
+    position: "absolute",
+    top: 48,
+    left: 16,
   },
   icon: {
     marginRight: 10,
   },
   input: {
     flex: 1,
-    fontFamily: FontFamily.montserratRegular,
-    color: Color.colorGray_100,
+    fontFamily: FontFamily.KanitRegular,
+    color: Color.colorBlack,
     paddingVertical: 12,
-    fontWeight: "700",
+    fontSize: 22,
   },
   buttonContainer: {
+    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
@@ -185,6 +195,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 32,
     alignSelf: "center",
+    elevation: 10,
+    shadowColor: "#000",
   },
   backButton: {
     flexDirection: "row",
@@ -198,9 +210,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   buttonText: {
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
-    fontWeight: "700",
+    fontSize: FontSize.size_mini,
+    fontFamily: FontFamily.KanitRegular,
+    // fontWeight: "700",
     color: Color.colorWhite,
   },
 });

@@ -5,12 +5,13 @@ import {
   View,
   ActivityIndicator,
   Image,
+  ImageBackground,
 } from "react-native";
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RouteProp } from "@react-navigation/native";
-import { RootStackParamList } from "../App"; 
+import { RootStackParamList } from "../App";
 import { Color, FontFamily, FontSize } from "../GlobalStyles";
 import { BASE_URL } from "../config";
 
@@ -25,7 +26,7 @@ const LoadingNearBy = () => {
     butget,
     selectedActivities,
     latitude,
-    longitude
+    longitude,
   } = route.params;
 
   const [places, setPlaces] = useState<any[]>([]); // เก็บข้อมูลจาก API
@@ -33,20 +34,24 @@ const LoadingNearBy = () => {
 
   useEffect(() => {
     setIsLoading(true);
-  
+
     // ✅ เช็คว่ามีพิกัดหรือไม่
-    const useLatLon = latitude !== undefined && latitude !== null && longitude !== undefined && longitude !== null;
-  
-    const apiURL = useLatLon 
+    const useLatLon =
+      latitude !== undefined &&
+      latitude !== null &&
+      longitude !== undefined &&
+      longitude !== null;
+
+    const apiURL = useLatLon
       ? `${BASE_URL}/search_nearby?latitude=${latitude}&longitude=${longitude}&radius=200`
       : `${BASE_URL}/search_nearby?postcode=12120&radius=200m`;
-  
+
     axios
       .get(apiURL)
       .then((response) => {
         setPlaces(response.data.data); // ✅ เก็บข้อมูลสถานที่
         setIsLoading(false);
-  
+
         // ✅ ไปหน้า Result พร้อมส่งข้อมูล
         navigation.replace("ResultNearBy", {
           selectedOption,
@@ -62,10 +67,12 @@ const LoadingNearBy = () => {
         setIsLoading(false);
       });
   }, [navigation, latitude, longitude]);
-  
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={require("../assets/bg_qa_1.jpg")}
+      style={styles.container}
+    >
       <Image source={require("../assets/loading.gif")} style={styles.gif} />
       {/* ข้อความ */}
       <Text style={styles.title}>ขอให้สนุกกับการเดินทาง</Text>
@@ -79,7 +86,7 @@ const LoadingNearBy = () => {
       {isLoading && (
         <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
       )}
-    </View>
+    </ImageBackground>
   );
 };
 
@@ -93,14 +100,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
     textAlign: "center",
     marginBottom: 10,
   },
   subtitle: {
     fontSize: FontSize.m3LabelMedium_size,
-    fontFamily: FontFamily.nunitoRegular,
+    fontFamily: FontFamily.KanitRegular,
     color: "#858585",
     textAlign: "center",
     marginBottom: 20,

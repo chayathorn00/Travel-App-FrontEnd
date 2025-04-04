@@ -22,9 +22,13 @@ const ProfilePicture = () => {
   // ขอ Permission ก่อนใช้งาน Image Picker
   React.useEffect(() => {
     (async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permission Denied", "ต้องอนุญาตให้เข้าถึงแกลเลอรี่เพื่อเปลี่ยนรูปโปรไฟล์");
+        Alert.alert(
+          "Permission Denied",
+          "ต้องอนุญาตให้เข้าถึงแกลเลอรี่เพื่อเปลี่ยนรูปโปรไฟล์"
+        );
       }
     })();
   }, []);
@@ -101,7 +105,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
   saveText: {
@@ -129,7 +133,7 @@ const styles = StyleSheet.create({
   },
   changeText: {
     fontSize: FontSize.size_base,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
 });

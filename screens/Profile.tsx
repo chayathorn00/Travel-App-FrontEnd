@@ -9,22 +9,25 @@ import {
   SafeAreaView,
   TextInput,
   ActivityIndicator,
-  PermissionsAndroid, 
+  PermissionsAndroid,
   Platform,
-  Alert
+  Alert,
+  ImageBackground,
+  Pressable,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import DropDownPicker from "react-native-dropdown-picker";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 import { BASE_URL } from "../config";
 import LongdoMapView from "./LongdoMapView";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
+import IcBack from "../assets/ic_back.svg";
 
 type DecodedToken = {
   account_id: number;
@@ -80,7 +83,9 @@ const Profile = () => {
   const [year, setYear] = React.useState<number | null>(null);
   const [latitude, setLatitude] = React.useState<number | null>(null);
   const [longitude, setLongitude] = React.useState<number | null>(null);
-  const [account_picture, setAccountPicture] = React.useState<string | null>(null);
+  const [account_picture, setAccountPicture] = React.useState<string | null>(
+    null
+  );
 
   const [dayOpen, setDayOpen] = React.useState(false);
   const [monthOpen, setMonthOpen] = React.useState(false);
@@ -111,7 +116,7 @@ const Profile = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-    const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -125,17 +130,14 @@ const Profile = () => {
           navigation.replace("Auth");
           return;
         }
-  
         const decoded: DecodedToken = jwtDecode(token);
         console.log("📩 JWT Payload:", decoded);
-  
         const response = await axios.get(
           `${BASE_URL}/accounts_list/${decoded.account_id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-  
         console.log("📩 response:", response.data);
         setProfile(response.data); // ✅ อัปเดตโปรไฟล์
       } catch (err) {
@@ -145,13 +147,16 @@ const Profile = () => {
         setLoading(false);
       }
     };
-  
+
     fetchProfile();
   }, []); // ✅ useEffect สำหรับ fetch ข้อมูลโปรไฟล์
-  
+
   // ✅ useEffect สำหรับแยกวัน/เดือน/ปี
   useEffect(() => {
-    if (profile?.account_birthday && profile.account_birthday !== "0000-00-00") {
+    if (
+      profile?.account_birthday &&
+      profile.account_birthday !== "0000-00-00"
+    ) {
       const [yearStr, monthStr, dayStr] = profile.account_birthday.split("-");
       setYear(yearStr ? parseInt(yearStr, 10) : null);
       setMonth(monthStr ? parseInt(monthStr, 10) : null);
@@ -163,18 +168,18 @@ const Profile = () => {
     }
 
     if (profile) {
-    console.log(profile.longitude);
-    setName(profile.account_name || "");
+      console.log(profile.longitude);
+      setName(profile.account_name || "");
       setGender(profile.account_gender || "none");
       setPhone(profile.account_telephone || "");
-      setLatitude(profile.latitude ? profile.latitude: null);
+      setLatitude(profile.latitude ? profile.latitude : null);
       setLongitude(profile.longitude ? profile.longitude : null);
       setAccountPicture(profile.account_picture || "");
     }
   }, [profile]); // ✅ ทำงานเมื่อ profile เปลี่ยนแปลง
-  
+
   const requestLocationPermission = async () => {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       try {
         const fineLocation = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -183,15 +188,15 @@ const Profile = () => {
             message: "แอปต้องการเข้าถึงตำแหน่งของคุณ",
             buttonNeutral: "ถามอีกครั้ง",
             buttonNegative: "ยกเลิก",
-            buttonPositive: "ตกลง"
+            buttonPositive: "ตกลง",
           }
         );
-  
+
         if (fineLocation !== PermissionsAndroid.RESULTS.GRANTED) {
           console.log("❌ ปฏิเสธการขอใช้ตำแหน่ง");
           return false;
         }
-  
+
         // ขอ Background Location (สำหรับ Android 11+)
         if (Platform.Version >= 30) {
           const backgroundLocation = await PermissionsAndroid.request(
@@ -201,16 +206,16 @@ const Profile = () => {
               message: "แอปต้องใช้ตำแหน่งในพื้นหลังเพื่อการทำงาน",
               buttonNeutral: "ถามอีกครั้ง",
               buttonNegative: "ยกเลิก",
-              buttonPositive: "ตกลง"
+              buttonPositive: "ตกลง",
             }
           );
-  
+
           if (backgroundLocation !== PermissionsAndroid.RESULTS.GRANTED) {
             console.log("❌ ปฏิเสธการขอใช้ตำแหน่งพื้นหลัง");
             return false;
           }
         }
-  
+
         console.log("✅ ได้รับอนุญาตให้ใช้ตำแหน่ง");
         return true;
       } catch (err) {
@@ -220,27 +225,30 @@ const Profile = () => {
     }
     return true;
   };
-  
 
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      console.log('❌ Permission denied');
+    if (status !== "granted") {
+      console.log("❌ Permission denied");
       return;
     }
-  
+
     console.log("📡 กำลังดึงพิกัด...");
-  
+
     const location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.High,
     });
-  
-    console.log("📌 ได้รับพิกัด:", location.coords.latitude, location.coords.longitude);
+
+    console.log(
+      "📌 ได้รับพิกัด:",
+      location.coords.latitude,
+      location.coords.longitude
+    );
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
     updateLocation(location.coords.latitude, location.coords.longitude);
   };
-  
+
   const updateLocation = async (latitude: number, longitude: number) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -249,9 +257,9 @@ const Profile = () => {
         navigation.replace("Auth");
         return;
       }
-  
+
       if (!profile) return;
-  
+
       const response = await axios.post(
         `${BASE_URL}/profile_location/${profile.account_id}`,
         { latitude, longitude },
@@ -262,13 +270,13 @@ const Profile = () => {
           },
         }
       );
-  
+
       console.log("📡 อัปเดตพิกัดสำเร็จ:", response.data);
       Alert.alert("ตำแหน่ง", "อัปเดตตำแหน่งสำเร็จ");
     } catch (error) {
       console.error("❌ อัปเดตพิกัดผิดพลาด:", error);
     }
-  };  
+  };
 
   const updateProfile = async () => {
     try {
@@ -278,17 +286,17 @@ const Profile = () => {
         navigation.replace("Auth");
         return;
       }
-  
+
       if (!profile) return;
-  
+
       // ✅ จัดรูปแบบวันเกิดให้เป็น YYYY-MM-DD
       const formattedBirthday =
-  year && month && day
-    ? `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`
-    : "0000-00-00"; // ✅ ถ้าไม่มีค่าจะส่งค่าเริ่มต้น
+        year && month && day
+          ? `${year}-${month.toString().padStart(2, "0")}-${day
+              .toString()
+              .padStart(2, "0")}`
+          : "0000-00-00"; // ✅ ถ้าไม่มีค่าจะส่งค่าเริ่มต้น
 
-
-  
       const payload = {
         account_email: profile.account_email, // ไม่แก้ไขอีเมล
         account_name: name ?? profile.account_name,
@@ -299,9 +307,9 @@ const Profile = () => {
         latitude: latitude ?? profile.latitude,
         longitude: longitude ?? profile.longitude,
       };
-  
+
       console.log("📩 ส่งข้อมูลไป API:", payload);
-  
+
       const response = await axios.put(
         `${BASE_URL}/profile/${profile.account_id}`,
         payload,
@@ -312,7 +320,7 @@ const Profile = () => {
           },
         }
       );
-  
+
       console.log("✅ อัปเดตโปรไฟล์สำเร็จ:", response.data);
       setEdit(false); // ✅ ปิดโหมดแก้ไข
     } catch (error) {
@@ -325,14 +333,12 @@ const Profile = () => {
       await AsyncStorage.removeItem("userToken"); // ✅ ลบ Token
       await AsyncStorage.removeItem("userEmail"); // ✅ ลบข้อมูลอีเมล
       console.log("✅ ออกจากระบบสำเร็จ");
-      
+
       navigation.replace("SignIn"); // ✅ นำไปยังหน้าเข้าสู่ระบบ
     } catch (error) {
       console.error("❌ ออกจากระบบล้มเหลว:", error);
     }
   };
-  
-  
 
   if (loading) {
     return (
@@ -358,41 +364,59 @@ const Profile = () => {
       aspect: [1, 1], // ปรับขนาดเป็นสี่เหลี่ยมจัตุรัส
       quality: 1,
     });
-  
+
     if (!result.canceled) {
       setAccountPicture(result.assets[0].uri);
     }
   };
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={require("../assets/bg_qa_1.jpg")}
+      style={styles.container}
+    >
       <SafeAreaView />
       {/* Header */}
       <View style={styles.header}>
+        <Pressable
+          onPress={async () => {
+            navigation.pop();
+          }}
+        >
+          <IcBack width={24} height={24} />
+        </Pressable>
+
         {/* Avatar พร้อมกดเพื่อไปหน้า Profile */}
-        <View>
-        <Image
-          source={
-            profile?.account_picture
-              ? { uri: profile.account_picture } // ✅ ใช้ URL ถ้ามีข้อมูล
-              : require("../assets/3d-avatars--9.png") // ✅ ใช้รูปเดิมถ้าไม่มีข้อมูล
-          }
-          style={styles.avatar}
-        />
 
-        </View>
-
-        <View>
-          <Text style={styles.username}>{profile?.account_name || "ไม่ระบุ"}</Text>
-          <Text style={styles.email}>{profile?.account_email || "ไม่พบอีเมล"}</Text>
+        <View style={styles.rowProfileInfo}>
+          <View>
+            <Text style={styles.username}>
+              {profile?.account_name || "ไม่ระบุ"}
+            </Text>
+            <Text style={styles.email}>
+              {profile?.account_email || "ไม่พบอีเมล"}
+            </Text>
+          </View>
+          <View>
+            <Image
+              source={
+                profile?.account_picture
+                  ? { uri: profile.account_picture } // ✅ ใช้ URL ถ้ามีข้อมูล
+                  : require("../assets/3d-avatars--9.png") // ✅ ใช้รูปเดิมถ้าไม่มีข้อมูล
+              }
+              style={styles.avatar}
+            />
+          </View>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Avatar & User Info */}
-        <Text style={styles.textTitle}>บัญชี</Text>
+        <Text style={styles.textTitle}>ข้อมูลโปรไฟล์</Text>
         <View style={styles.card}>
-          <View style={[styles.detailContainer, { zIndex: 4000, elevation: 4000 }]}>
+          <View
+            style={[styles.detailContainer, { zIndex: 4000, elevation: 4000 }]}
+          >
             <TextInput
               editable={edit}
               style={styles.textInput}
@@ -404,8 +428,8 @@ const Profile = () => {
           </View>
 
           <View style={styles.detailContainer}>
-            <View style={{ zIndex: 4000}}>
-            <DropDownPicker
+            <View style={{ zIndex: 4000 }}>
+              <DropDownPicker
                 open={genderOpen} // ✅ ใช้ state ควบคุมการเปิด-ปิด
                 value={gender} // ✅ ใช้ค่า gender ที่อัปเดตได้
                 items={genderList}
@@ -418,7 +442,7 @@ const Profile = () => {
               />
             </View>
           </View>
-          <View style={[styles.detailContainer,{zIndex:1}]}>
+          <View style={[styles.detailContainer, { zIndex: 1 }]}>
             {/* Dropdown for Day */}
             <View style={{ zIndex: dayOpen ? 3000 : 1 }}>
               <DropDownPicker
@@ -462,7 +486,7 @@ const Profile = () => {
               />
             </View>
           </View>
-          <View style={{zIndex:0}}>
+          <View style={{ zIndex: 0 }}>
             <View style={styles.detailContainer}>
               <TextInput
                 style={styles.textInput}
@@ -479,14 +503,19 @@ const Profile = () => {
             </View>
           </View>
           <View style={{ zIndex: 0 }}>
-            <View style={styles.detailContainer}>
+            <View style={styles.detailContainerProfile}>
               <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
                 <Text style={styles.uploadButtonText}>
                   {account_picture ? "เปลี่ยนรูปภาพโปรไฟล์" : "เลือกไฟล์รูปภาพ"}
                 </Text>
               </TouchableOpacity>
-              
-              {account_picture && <Image source={{ uri: account_picture }} style={styles.previewImage} />}
+
+              {account_picture && (
+                <Image
+                  source={{ uri: account_picture }}
+                  style={styles.previewImage}
+                />
+              )}
             </View>
           </View>
           <View style={{ zIndex: 0 }}>
@@ -496,26 +525,30 @@ const Profile = () => {
                 value={latitude !== null ? String(latitude) : ""}
                 placeholder="ละติจูด"
                 editable={edit}
-                onChangeText={(text) => setLatitude(text ? parseFloat(text) : null)}
+                onChangeText={(text) =>
+                  setLatitude(text ? parseFloat(text) : null)
+                }
               />
             </View>
           </View>
           <View style={{ zIndex: 0 }}>
             <View style={styles.detailContainer}>
               <TextInput
-                  style={styles.textInput}
-                  value={longitude !== null ? `${longitude}` : ""}
-                  placeholder="ลองจิจูด"
-                  editable={edit}
-                  onChangeText={(text) => setLongitude(text ? parseFloat(text) : null)}
-                />
+                style={styles.textInput}
+                value={longitude !== null ? `${longitude}` : ""}
+                placeholder="ลองจิจูด"
+                editable={edit}
+                onChangeText={(text) =>
+                  setLongitude(text ? parseFloat(text) : null)
+                }
+              />
             </View>
           </View>
 
           <Text style={styles.textSubTitle}>ตำแหน่งของคุณ</Text>
 
           <LongdoMapView
-            latitude={latitude ? latitude : 13.736717}  // Default: Bangkok
+            latitude={latitude ? latitude : 13.736717} // Default: Bangkok
             longitude={longitude ? longitude : 100.523186}
           />
 
@@ -536,17 +569,22 @@ const Profile = () => {
               }
             }}
           >
-            <Text style={styles.editText}>{edit ? "บันทึก" : "แก้ไขโปรไฟล์"}</Text>
+            <Text style={styles.editText}>
+              {edit ? "บันทึก" : "แก้ไขโปรไฟล์"}
+            </Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          style={[styles.editButton, { width: "40%", backgroundColor: "#B7B7B7", marginTop: 80 }]}
+          style={[
+            styles.editButton,
+            { width: "40%", backgroundColor: "#B7B7B7", marginTop: 30 },
+          ]}
           onPress={signout} // ✅ เรียกใช้ฟังก์ชัน logout
         >
           <Text style={styles.editText}>ออกจากระบบ</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </ImageBackground>
   );
 };
 
@@ -555,27 +593,38 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.colorWhite,
   },
+  rowProfileInfo: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   header: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 60,
+    paddingBottom: 16,
   },
   avatar: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     borderRadius: 25,
     marginRight: 15,
   },
   username: {
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
+    fontSize: 25,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
+    textAlign: "right",
   },
   email: {
-    fontSize: FontSize.size_mini,
-    fontFamily: FontFamily.nunitoRegular,
+    fontSize: 17,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.gray1,
+    left: 39,
   },
   backText: {
     fontSize: FontSize.size_base,
@@ -583,12 +632,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
   content: {
-    paddingVertical: 20,
-    paddingHorizontal:20
+    paddingVertical: 10,
+    paddingHorizontal: 30,
   },
   profileInfo: {
     alignItems: "center",
@@ -600,12 +649,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: Border.br_81xl,
-    width: "50%",
+    width: "45%",
     alignSelf: "center",
   },
   editText: {
     fontSize: FontSize.size_base,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
     textAlign: "center",
   },
@@ -616,7 +665,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: Color.colorWhitesmoke_100,
+    borderBottomColor: Color.colorWhitesmoke_300,
   },
   menuText: {
     fontSize: FontSize.size_base,
@@ -628,7 +677,7 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     color: "red",
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
   dropdown: {
     width: "100%",
@@ -666,14 +715,21 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 1,
+    elevation: 4,
     fontSize: 16,
+    color: "#000",
+  },
+  detailContainerProfile: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 16,
+    zIndex: 9,
   },
   detailContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
-    zIndex:9
+    zIndex: 9,
   },
   card: {
     borderRadius: 23,
@@ -687,7 +743,7 @@ const styles = StyleSheet.create({
     elevation: 1,
     flex: 1,
     gap: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   input: {
     width: "70%",
@@ -704,13 +760,19 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
     backgroundColor: Color.colorWhite,
+    fontFamily: FontFamily.KanitRegular,
   },
   textTitle: {
-    fontSize: FontSize.size_5xl,
-    fontWeight: "bold",
+    fontSize: 27,
+    fontFamily: FontFamily.KanitRegular,
+    // fontWeight: "bold",
+    left: 30,
+    bottom: 10, 
   },
   textSubTitle: {
-    fontWeight: "bold",
+    fontSize: 16,
+    // fontWeight: "bold",
+    fontFamily: FontFamily.KanitRegular,
   },
   loadingContainer: {
     flex: 1,
@@ -735,7 +797,7 @@ const styles = StyleSheet.create({
   },
   gpsText: {
     fontSize: FontSize.size_base,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
     textAlign: "center",
   },
@@ -754,14 +816,15 @@ const styles = StyleSheet.create({
   },
   uploadButton: {
     width: "100%",
-    backgroundColor: '#007bff',
+    backgroundColor: "#007bff",
     padding: 10,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   uploadButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
+    fontFamily: FontFamily.KanitRegular,
   },
   previewImage: {
     width: 100,

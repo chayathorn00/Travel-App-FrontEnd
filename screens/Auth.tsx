@@ -1,16 +1,23 @@
 import * as React from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
-import { ImageBackground, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
 import { useNavigation } from "@react-navigation/native";
 
 const Auth = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
     <ImageBackground
-      source={require("../assets/glaciallakesgokyovillagenepaladapt-11901-1.png")}
+      source={require("../assets/first.png")}
       style={styles.background}
       resizeMode="cover"
     >
@@ -19,16 +26,16 @@ const Auth = () => {
 
       {/* Content */}
       <View style={styles.content}>
-        <Text style={styles.appTitle}>Travel App</Text>
+        <Text style={styles.appTitle}>NexTrip</Text>
       </View>
       <View style={styles.sectionPosition}>
-      <Text style={styles.subtitle}>
-          <Text style={styles.letThe}>Let the{"\n"}</Text>
-          <Text style={styles.feelingTakeYou}>Feeling take you{"\n"}</Text>
-          <Text style={styles.travel}>Travel</Text>
+        <Text style={styles.subtitle}>
+          <Text style={styles.letThe}>ให้เรา{"\n"}</Text>
+          <Text style={styles.feelingTakeYou}>วางแผน{"\n"}</Text>
+          <Text style={styles.travel}>การเดินทาง</Text>
         </Text>
-  
-      <View style={styles.buttonContainer}>
+
+        <View style={styles.buttonContainer}>
           {/* ปุ่ม Sign Up */}
           <TouchableOpacity
             style={styles.signUpWrapper}
@@ -45,7 +52,7 @@ const Auth = () => {
             <Text style={styles.signInText}>เข้าสู่ระบบ</Text>
           </TouchableOpacity>
         </View>
-        </View>
+      </View>
     </ImageBackground>
   );
 };
@@ -68,38 +75,38 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start", // ดันเนื้อหาขึ้นด้านบน
     paddingHorizontal: 20,
     position: "absolute",
-    top: '30%'
-},
+    top: "15%",
+  },
   appTitle: {
     fontSize: 64,
-    fontFamily: FontFamily.oleoScriptSwashCapsRegular,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
     textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 0, height: 2 },
+    textShadowOffset: { width: 0, height: 5 },
     textShadowRadius: 10,
-    textAlign: "center"
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 24,
     color: Color.colorWhite,
     textAlign: "center",
-    marginVertical: 20,
+    marginVertical: 50,
   },
   letThe: {
-    fontSize: 24,
-    fontFamily: FontFamily.montserratRegular,
-    textAlign:'right'
+    fontSize: 35,
+    fontFamily: FontFamily.KanitRegular,
+    textAlign: "right",
   },
   feelingTakeYou: {
-    fontSize: 36,
-    fontFamily: FontFamily.montserratMedium,
+    fontSize: 40,
+    fontFamily: FontFamily.KanitRegular,
     fontWeight: "500",
-    textAlign:'right'
+    textAlign: "right",
   },
   travel: {
-    fontSize: 40,
-    fontFamily: FontFamily.montserratRegular,
-    textAlign:'right'
+    fontSize: 50,
+    fontFamily: FontFamily.KanitRegular,
+    textAlign: "right",
   },
   profileContainer: {
     alignItems: "center",
@@ -132,24 +139,26 @@ const styles = StyleSheet.create({
     marginLeft: 30,
   },
   signUpText: {
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
-    fontWeight: "700",
+    fontSize: FontSize.size_mini,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
     textAlign: "center",
+    elevation: 5,
+    shadowColor: "#000",
   },
   signInText: {
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
-    fontWeight: "700",
+    fontSize: FontSize.size_mini,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
     textAlign: "center",
+    elevation: 5,
+    shadowColor: "#000",
   },
   sectionPosition: {
-     position: 'absolute',
-    bottom:'12%',
-    paddingHorizontal:40
-  }
+    position: "absolute",
+    bottom: "12%",
+    paddingHorizontal: 40,
+  },
 });
 
 export default Auth;

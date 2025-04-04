@@ -27,7 +27,6 @@ export const FontFamily = {
   KanitLight: "KanitLight",
   KanitExtraBold: "KanitExtraBold",
   KanitBold: "KanitBold",
-
 };
 /* font sizes */
 export const FontSize = {
@@ -53,6 +52,7 @@ export const Color = {
   ColorBlue: "#87CEEB",
   colorWhitesmoke_100: "#f2f2f2",
   colorWhitesmoke_200: "rgba(242, 242, 242, 0.8)",
+  colorWhitesmoke_300: "#d9d9d9",
   m3SysLightOnSurfaceVariant: "#49454f",
   gray1: "#333",
   colorBlack: "#000",

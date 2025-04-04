@@ -41,10 +41,16 @@ const Loading = () => {
         return;
       }
 
+      console.log("📡 กำลังดึงพิกัด...");
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
 
+      console.log(
+        "📌 ได้รับพิกัด:",
+        location.coords.latitude,
+        location.coords.longitude
+      );
       setLatitude(location.coords.latitude);
       setLongitude(location.coords.longitude);
     };
@@ -66,6 +72,8 @@ const Loading = () => {
         activity_interest_id: selectedActivities.map(Number),
       };
 
+      console.log("📤 Sending data:", payload);
+
       axios
         .post(`${BASE_URL}/qa_transaction`, payload, {
           headers: {
@@ -74,6 +82,8 @@ const Loading = () => {
           },
         })
         .then((response) => {
+          console.log("✅ Response:", response.data);
+
           if (response.data.success) {
             const { account_id } = response.data.data;
             navigation.replace("Result", {
@@ -99,18 +109,18 @@ const Loading = () => {
 
   return (
     <ImageBackground
-      source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
+      source={require("../assets/bg_qa_1.jpg")}
       style={styles.container}
-      imageStyle={{ opacity: 0.7 }}
-      resizeMode="cover"
     >
-      <View style={styles.innerContainer}>
-        <Image source={require("../assets/loading.gif")} style={styles.gif} />
-        <Text style={styles.title}>ขอให้สนุกกับการเดินทาง</Text>
-        <Text style={styles.subtitle}>
-          {`รอสักครู่ AI กำลังประมวลผล\nเพื่อค้นหาสถานที่ที่เหมาะกับคุณ`}
-        </Text>
-      </View>
+      <Image source={require("../assets/loading.gif")} style={styles.gif} />
+      <Text style={styles.title}>ขอให้สนุกกับการเดินทาง</Text>
+      <Text style={styles.subtitle}>
+        {`รอสักครู่ AI กำลังประมวลผล\nเพื่อค้นหาสถานที่ที่เหมาะกับคุณ`}
+      </Text>
+
+      {/* {isLoading && (
+        <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
+      )} */}
     </ImageBackground>
   );
 };
@@ -118,9 +128,7 @@ const Loading = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  innerContainer: {
-    flex: 1,
+    backgroundColor: Color.colorWhite,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
@@ -130,15 +138,15 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
     textAlign: "center",
-    marginBottom: 15,
+    marginBottom: 30,
   },
   subtitle: {
-    fontSize: FontSize.size_lg,
+    fontSize: 17,
     fontFamily: FontFamily.KanitRegular,
-    color: "#000",
+    color: "#858585",
     textAlign: "center",
     marginBottom: 20,
-    lineHeight: 30,
+    lineHeight: 18,
   },
   gif: {
     width: 200,

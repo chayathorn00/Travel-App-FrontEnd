@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   Platform,
+  Pressable,
 } from "react-native";
 import axios from "axios"; // ✅ นำเข้า axios สำหรับเรียก API
 import User from "../assets/user.svg";
@@ -17,6 +18,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { BASE_URL } from "../config";
+import Header from "../component/Header";
+import IcBack from "../assets/ic_back.svg";
 
 const SignUp = () => {
   const navigation =
@@ -49,9 +52,11 @@ const SignUp = () => {
 
       if (response.status === 201) {
         const message = "สมัครสมาชิกสำเร็จ! คุณสามารถเข้าสู่ระบบได้แล้ว";
-        Platform.OS === "web" ? window.alert(message) : Alert.alert(message, "", [
-          { text: "ตกลง", onPress: () => navigation.navigate("SignIn") },
-        ]);
+        Platform.OS === "web"
+          ? window.alert(message)
+          : Alert.alert(message, "", [
+              { text: "ตกลง", onPress: () => navigation.navigate("SignIn") },
+            ]);
       }
     } catch (error) {
       console.error("Signup Error:", error);
@@ -62,13 +67,21 @@ const SignUp = () => {
 
   return (
     <ImageBackground
-      source={require("../assets/glaciallakesgokyovillagenepaladapt-11901-2.png")}
+      source={require("../assets/register.png")}
       style={styles.background}
       resizeMode="cover"
     >
-      <View style={styles.overlay} />
+      <View style={styles.overlay}></View>
+      <Pressable
+        onPress={() => {
+          navigation.navigate("Auth");
+        }}
+        style={styles.backBtn}
+      >
+        <IcBack width={24} height={24} />
+      </Pressable>
       <View>
-        <Text style={styles.title}>ลงทะเบียน</Text>
+        <Text style={styles.title}>ลงทะเบียนสมัครสมาชิก</Text>
 
         <View style={styles.container}>
           {/* Input Email */}
@@ -116,12 +129,6 @@ const SignUp = () => {
           <Text style={styles.buttonText}>ลงทะเบียน</Text>
         </TouchableOpacity>
         {/* ปุ่ม Back */}
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.navigate("Auth")}
-        >
-          <Text style={styles.buttonText}>กลับ</Text>
-        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -143,14 +150,21 @@ const styles = StyleSheet.create({
     width: "85%",
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     padding: 35,
-    borderRadius: 40,
+    borderRadius: 60,
     alignItems: "center",
   },
   title: {
-    fontSize: 36,
-    fontFamily: FontFamily.montserratBold,
+    fontSize: 40,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
-    marginBottom: 20,
+    marginBottom: 30,
+    left: 0,
+    top: -25,
+  },
+  backBtn: {
+    position: "absolute",
+    top: 48,
+    left: 16,
   },
   inputContainer: {
     flexDirection: "row",
@@ -162,16 +176,18 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderWidth: 1,
     borderColor: "#00000038",
+    elevation: 10,
+    shadowColor: "#000",
   },
   icon: {
     marginRight: 10,
   },
   input: {
     flex: 1,
-    fontFamily: FontFamily.montserratRegular,
-    color: Color.colorGray_100,
+    fontFamily: FontFamily.KanitRegular,
+    color: Color.colorBlack,
     paddingVertical: 12,
-    fontWeight: "700",
+    fontSize: 22,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -183,6 +199,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 32,
     alignSelf: "center",
+    elevation: 10,
+    shadowColor: "#000",
   },
   backButton: {
     flexDirection: "row",
@@ -196,9 +214,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   buttonText: {
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.nunitoBold,
-    fontWeight: "700",
+    fontSize: FontSize.size_mini,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
 });

@@ -71,7 +71,6 @@ const Favorite = () => {
     <View style={styles.container}>
       <SafeAreaView />
       <View style={styles.header}>
-    
         <Text style={styles.title}>สถานที่ที่คุณชอบ</Text>
       </View>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -137,7 +136,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: Color.colorWhitesmoke_100,
+    borderBottomColor: Color.colorWhitesmoke_300,
   },
   backText: {
     fontSize: FontSize.size_base,
@@ -145,7 +144,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: FontSize.m3LabelMedium_size,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     textAlign: "center",
   },
   scrollView: {
@@ -170,7 +169,7 @@ const styles = StyleSheet.create({
   },
   placeName: {
     fontSize: FontSize.size_2xs,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
   },
   description: {
@@ -197,7 +196,7 @@ const styles = StyleSheet.create({
   },
   routeText: {
     fontSize: FontSize.size_3xs,
-    fontFamily: FontFamily.nunitoBold,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
   activeDot: {

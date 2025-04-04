@@ -13,14 +13,12 @@ import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RouteProp } from "@react-navigation/native";
-import { RootStackParamList } from "../App"; 
+import { RootStackParamList } from "../App";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import Header from "../component/Header";
 import Progress from "../component/Progress";
 import Bank from "../assets/Bank.svg";
 import { BASE_URL } from "../config";
-import Ionicons from "react-native-vector-icons/Ionicons";
-
 
 const QA3 = () => {
   const navigation =
@@ -46,33 +44,49 @@ const QA3 = () => {
   }, []);
 
   return (
-    <View style={styles.wrapper}>
-  <ImageBackground
-    source={require("../assets/6fbc45fd-8842-4131-ac3c-b919eff34c6b.jpg")}
-    style={styles.container}
-    imageStyle={{ opacity: 0.7 }}
-    resizeMode="cover"
-  >
-    <SafeAreaView />
-    <Header page="3" />
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.detailContainer}>
+    <ImageBackground
+      source={require("../assets/bg_qa_1.jpg")}
+      style={styles.container}
+    >
+      <SafeAreaView />
+      <Header
+        page="3"
+        previous={() => {
+          navigation.goBack();
+        }}
+        next={
+          selectedDistance && butget
+            ? () => {
+                navigation.navigate("QA4", {
+                  selectedOption, // ✅ ส่งค่าที่เลือกจาก QA1
+                  selectedPlan, // ✅ ส่งค่าที่เลือกจาก QA2
+                  selectedDistance, // ✅ ส่งค่าที่เลือกจาก QA3
+                  butget, // ✅ ส่งค่าที่เลือกจาก QA3
+                });
+              }
+            : undefined
+        }
+      />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Progress progress="75" />
         <Text style={styles.title}>ระยะทางในการเดินทาง</Text>
+
         <View style={styles.optionGrid}>
           {distances.map((distance) => (
             <TouchableOpacity
               key={distance.distance_id}
               style={[
                 styles.option,
-                selectedDistance === distance.distance_id && styles.optionSelected,
+                selectedDistance === distance.distance_id &&
+                  styles.optionSelected,
               ]}
               onPress={() => setSelectedDistance(distance.distance_id)}
             >
               <Text
                 style={[
                   styles.optionText,
-                  selectedDistance === distance.distance_id && styles.optionTextSelected,
+                  selectedDistance === distance.distance_id &&
+                    styles.optionTextSelected,
                 ]}
               >
                 {distance.distance_km}
@@ -81,87 +95,53 @@ const QA3 = () => {
           ))}
         </View>
 
+        {/* งบประมาณ */}
         <Text style={styles.title}>งบประมาณในการเดินทาง</Text>
         <View style={styles.inputContainer}>
           <TextInput
             onChangeText={(text) => {
-              const numericValue = text.replace(/[^0-9]/g, "");
+              const numericValue = text.replace(/[^0-9]/g, ""); // ✅ ลบอักขระที่ไม่ใช่ตัวเลข
               setButget(numericValue);
             }}
-            value={butget}
+            value={butget} // ✅ แสดงค่าใน input
             keyboardType="numeric"
             style={styles.input}
             placeholder="กรอกงบประมาณ"
-            
           />
           <Bank width={20} height={20} />
         </View>
-      </View>
-    </ScrollView>
-
-    <TouchableOpacity
-      style={styles.backButton}
-      onPress={() => navigation.goBack()}
-    >
-      <Ionicons name="arrow-back-circle" size={40} color="#5893d8" />
-    </TouchableOpacity>
-
-    <TouchableOpacity
-      style={[styles.arrowButton, !(selectedDistance && butget) && styles.buttonDisabled]}
-      onPress={() => {
-        if (selectedDistance && butget) {
-          navigation.navigate("QA4", {
-            selectedOption,
-            selectedPlan,
-            selectedDistance,
-            butget,
-          });
-        }
-      }}
-      disabled={!(selectedDistance && butget)}
-    >
-      <Ionicons name="arrow-forward-circle" size={40} color={selectedDistance && butget ? "#5893d8" : "#999"} />
-    </TouchableOpacity>
-  </ImageBackground>
-</View>
-
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    position: "relative",
-  },
   container: {
     flex: 1,
-    position: "relative",
-    zIndex: 0,
+    backgroundColor: Color.colorWhite,
   },
   scrollContainer: {
-    paddingBottom: 100,
-  },
-  detailContainer: {
-    paddingHorizontal: 20,
+    paddingBottom: 100, // ป้องกันปุ่มถูกบัง
   },
   title: {
-    fontSize: 36,
+    fontSize: 30,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: "center",
   },
   optionGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginVertical: 20,
+    justifyContent: "center",
+    marginBottom: 10,
   },
   option: {
     width: "45%",
-    marginBottom: 10,
+    marginHorizontal: 10,
+    marginVertical: 10,
     backgroundColor: Color.colorWhitesmoke_100,
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderRadius: Border.br_base,
     alignItems: "center",
     borderWidth: 2,
@@ -170,12 +150,7 @@ const styles = StyleSheet.create({
   optionSelected: {
     borderColor: Color.colorCornflowerblue,
     backgroundColor: Color.colorCornflowerblue,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-    transform: [{ scale: 1.05 }],
+    
   },
   optionText: {
     fontSize: FontSize.size_mini,
@@ -200,33 +175,41 @@ const styles = StyleSheet.create({
     width: "85%",
     textAlign: "center",
     fontSize: FontSize.size_mini,
+    fontFamily: FontFamily.KanitRegular,
   },
-  arrowButton: {
+  nextButton: {
+    backgroundColor: Color.colorCornflowerblue,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: Border.br_base,
+    alignItems: "center",
     position: "absolute",
-    top: 50,
-    right: 40,
-    zIndex: 10,
+    bottom: 40,
+    right: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
+    elevation: 5,
   },
   backButton: {
+    backgroundColor: Color.colorDimgray,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: Border.br_base,
+    alignItems: "center",
     position: "absolute",
-    top: 50,
-    left: 40,
-    zIndex: 10,
+    bottom: 40,
+    left: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
+    elevation: 5,
   },
   buttonDisabled: {
-    opacity: 0.5,
+    backgroundColor: Color.colorGray_100,
+  },
+  buttonText: {
+    fontSize: FontSize.m3LabelMedium_size,
+    fontFamily: FontFamily.KanitRegular,
+    fontWeight: "700",
+    color: Color.colorWhite,
   },
 });
-
 
 export default QA3;

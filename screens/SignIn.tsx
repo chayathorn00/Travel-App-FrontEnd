@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     borderColor: "#00000038",
     elevation: 10,
     shadowColor: "#000",
+    borderRadius: 20,
   },
   backBtn: {
     position: "absolute",

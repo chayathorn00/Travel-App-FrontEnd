@@ -343,7 +343,7 @@ const HomePage = () => {
           style={styles.surveyButton}
           onPress={() => navigation.navigate("QA1")} // ไปที่แบบสอบถาม
         >
-          <Text style={styles.surveyText}>เริ่มทำแบบสอบถาม</Text>
+          <Text style={styles.surveyText}>เริ่มทริปถัดไป</Text>
         </TouchableOpacity>
       </ScrollView>
     </ImageBackground>
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: Border.br_3xs,
   },
   surveyButton: {
-    width: "50%",
+    width: "35%",
     marginTop: 30,
     backgroundColor: Color.colorCornflowerblue,
     paddingVertical: 12,

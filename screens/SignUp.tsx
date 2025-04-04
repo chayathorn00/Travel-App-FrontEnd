@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     width: "85%",
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     padding: 35,
-    borderRadius: 60,
+    borderRadius: 40,
     alignItems: "center",
   },
   title: {
@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     borderColor: "#00000038",
     elevation: 10,
     shadowColor: "#000",
+    borderRadius: 20,
   },
   icon: {
     marginRight: 10,

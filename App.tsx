@@ -1,12 +1,14 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; // นำเข้า Bottom Tabs Navigator
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useFonts } from "expo-font";
-import { LogBox } from "react-native";
+import { LogBox, TouchableOpacity } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { Camera } from "expo-camera";
 
-// นำเข้าหน้าจอต่างๆ
+// Screens
+import SplashScreen from "./screens/SplashScreen";
 import Auth from "./screens/Auth";
 import SignIn from "./screens/SignIn";
 import SignUp from "./screens/SignUp";
@@ -24,14 +26,14 @@ import Profile from "./screens/Profile";
 import ProfileSetting from "./screens/ProfileSetting";
 import ProfilePicture from "./screens/ProfilePicture";
 import HistoryResult from "./screens/HistoryResult";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { TouchableOpacity } from "react-native";
+
 LogBox.ignoreAllLogs(true);
 
 export type RootStackParamList = {
+  Splash: undefined;
   QA1: undefined;
-  QA2: { selectedOption: string }; // ✅ รับค่าจาก QA1
-  QA3: { selectedOption: string; selectedPlan: number }; // ✅ รับค่าจาก QA1 + QA2
+  QA2: { selectedOption: string };
+  QA3: { selectedOption: string; selectedPlan: number };
   QA4: {
     selectedOption: string;
     selectedPlan: number;
@@ -62,9 +64,8 @@ export type RootStackParamList = {
     selectedDistance: number;
     butget: string;
     selectedActivities: string[];
-    account_id: number; // ✅ เพิ่ม account_id
+    account_id: number;
   };
-  
   ResultNearBy: {
     selectedOption: string;
     selectedPlan: number;
@@ -100,7 +101,7 @@ type Place = {
   obsoleted: boolean;
 };
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
@@ -116,7 +117,6 @@ function MyTabs() {
         tabBarInactiveTintColor: "#ffffff",
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: string = "";
-
           if (route.name === "HomeTabs") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Profile") {
@@ -124,7 +124,6 @@ function MyTabs() {
           } else if (route.name === "Favorite") {
             iconName = focused ? "heart" : "heart-outline";
           }
-
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
@@ -136,8 +135,6 @@ function MyTabs() {
 }
 
 const App = () => {
-  const [hideSplashScreen, setHideSplashScreen] = React.useState(true);
-
   const [fontsLoaded, error] = useFonts({
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
     "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
@@ -150,7 +147,7 @@ const App = () => {
     "Montserrat-Medium": require("./assets/fonts/Montserrat-Medium.ttf"),
     "Montserrat-Bold": require("./assets/fonts/Montserrat-Bold.ttf"),
     "OleoScriptSwashCaps-Regular": require("./assets/fonts/OleoScriptSwashCaps-Regular.ttf"),
-    "MNNangKaiThot": require ("./assets/fonts/MNNangKaiThot.ttf"),
+    "MNNangKaiThot": require("./assets/fonts/MNNangKaiThot.ttf"),
     "EkkamaiNewBold": require("./assets/fonts/EkkamaiNew-Bold.ttf"),
     "EkkamaiNewThin": require("./assets/fonts/EkkamaiNew-Thin.ttf"),
     "EkkamaiNewRegular": require("./assets/fonts/EkkamaiNew-Regular.ttf"),
@@ -158,7 +155,6 @@ const App = () => {
     "PrintAble4UItalic": require("./assets/fonts/PrintAble4UItalic.ttf"),
     "PrintAble4URegular": require("./assets/fonts/PrintAble4URegular.ttf"),
     "PrintAble4UBold": require("./assets/fonts/PrintAble4UBold.ttf"),
-
     "KanitThin": require("./assets/fonts/Kanit-Thin.ttf"),
     "KanitSemiBold": require("./assets/fonts/Kanit-SemiBold.ttf"),
     "KanitRegular": require("./assets/fonts/Kanit-Regular.ttf"),
@@ -173,95 +169,27 @@ const App = () => {
   }
 
   return (
-    <>
-      <NavigationContainer>
-        {hideSplashScreen ? (
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen
-              name="QA1"
-              component={QA1}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="QA2"
-              component={QA2}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="QA3"
-              component={QA3}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="QA4"
-              component={QA4}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Loading"
-              component={Loading}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="LoadingNearBy"
-              component={LoadingNearBy}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Result"
-              component={Result}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ResultNearBy"
-              component={ResultNearBy}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomePage"
-              component={HomePage} // แทนที่ด้วย Bottom Tabs
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Auth"
-              component={Auth}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SignIn"
-              component={SignIn}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SignUp"
-              component={SignUp}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Profile"
-              component={Profile}
-              options={{ headerShown: false }}
-            />
-            {/* นำ MyTabs มาใช้เพื่อแสดงแท็บในหน้าที่ต้องการ */}
-            <Stack.Screen
-              name="ProfileSetting"
-              component={ProfileSetting}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ProfilePicture"
-              component={ProfilePicture}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HistoryResult"
-              component={HistoryResult}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        ) : null}
-      </NavigationContainer>
-    </>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Splash" component={SplashScreen} />
+        <Stack.Screen name="QA1" component={QA1} />
+        <Stack.Screen name="QA2" component={QA2} />
+        <Stack.Screen name="QA3" component={QA3} />
+        <Stack.Screen name="QA4" component={QA4} />
+        <Stack.Screen name="Loading" component={Loading} />
+        <Stack.Screen name="LoadingNearBy" component={LoadingNearBy} />
+        <Stack.Screen name="Result" component={Result} />
+        <Stack.Screen name="ResultNearBy" component={ResultNearBy} />
+        <Stack.Screen name="HomePage" component={HomePage} />
+        <Stack.Screen name="Auth" component={Auth} />
+        <Stack.Screen name="SignIn" component={SignIn} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="ProfileSetting" component={ProfileSetting} />
+        <Stack.Screen name="ProfilePicture" component={ProfilePicture} />
+        <Stack.Screen name="HistoryResult" component={HistoryResult} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

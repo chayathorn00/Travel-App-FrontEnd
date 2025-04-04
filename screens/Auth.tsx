@@ -31,8 +31,8 @@ const Auth = () => {
       <View style={styles.sectionPosition}>
         <Text style={styles.subtitle}>
           <Text style={styles.letThe}>ให้เรา{"\n"}</Text>
-          <Text style={styles.feelingTakeYou}>วางแผน{"\n"}</Text>
-          <Text style={styles.travel}>การเดินทาง</Text>
+          <Text style={styles.feelingTakeYou}>จัดหาที่{"\n"}</Text>
+          <Text style={styles.travel}>ท่องเที่ยว</Text>
         </Text>
 
         <View style={styles.buttonContainer}>

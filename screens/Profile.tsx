@@ -178,53 +178,7 @@ const Profile = () => {
     }
   }, [profile]); // ✅ ทำงานเมื่อ profile เปลี่ยนแปลง
 
-  const requestLocationPermission = async () => {
-    if (Platform.OS === "android") {
-      try {
-        const fineLocation = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: "ขออนุญาตใช้พิกัด",
-            message: "แอปต้องการเข้าถึงตำแหน่งของคุณ",
-            buttonNeutral: "ถามอีกครั้ง",
-            buttonNegative: "ยกเลิก",
-            buttonPositive: "ตกลง",
-          }
-        );
-
-        if (fineLocation !== PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("❌ ปฏิเสธการขอใช้ตำแหน่ง");
-          return false;
-        }
-
-        // ขอ Background Location (สำหรับ Android 11+)
-        if (Platform.Version >= 30) {
-          const backgroundLocation = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-            {
-              title: "ขออนุญาตใช้พิกัดเบื้องหลัง",
-              message: "แอปต้องใช้ตำแหน่งในพื้นหลังเพื่อการทำงาน",
-              buttonNeutral: "ถามอีกครั้ง",
-              buttonNegative: "ยกเลิก",
-              buttonPositive: "ตกลง",
-            }
-          );
-
-          if (backgroundLocation !== PermissionsAndroid.RESULTS.GRANTED) {
-            console.log("❌ ปฏิเสธการขอใช้ตำแหน่งพื้นหลัง");
-            return false;
-          }
-        }
-
-        console.log("✅ ได้รับอนุญาตให้ใช้ตำแหน่ง");
-        return true;
-      } catch (err) {
-        console.warn("❌ Error ขออนุญาต:", err);
-        return false;
-      }
-    }
-    return true;
-  };
+  
 
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();

@@ -31,6 +31,7 @@ LogBox.ignoreAllLogs(true);
 
 export type RootStackParamList = {
   Splash: undefined;
+  
   QA1: undefined;
   QA2: { selectedOption: string };
   QA3: { selectedOption: string; selectedPlan: number };
@@ -49,15 +50,6 @@ export type RootStackParamList = {
     latitude?: number | null;
     longitude?: number | null;
   };
-  LoadingNearBy: {
-    selectedOption: string;
-    selectedPlan: number;
-    selectedDistance: number;
-    butget: string;
-    selectedActivities: string[];
-    latitude?: number | null;
-    longitude?: number | null;
-  };
   Result: {
     selectedOption: string;
     selectedPlan: number;
@@ -66,14 +58,13 @@ export type RootStackParamList = {
     selectedActivities: string[];
     account_id: number;
   };
+
+  // ✅ แก้ตรงนี้ให้เหลือแบบนี้
+  LoadingNearBy: undefined;
   ResultNearBy: {
-    selectedOption: string;
-    selectedPlan: number;
-    selectedDistance: number;
-    butget: string;
-    selectedActivities: string[];
     places: Place[];
   };
+
   Favorite: undefined;
   HomePage: undefined;
   Profile: undefined;
@@ -99,6 +90,7 @@ type Place = {
   contributor?: string;
   verified: boolean;
   obsoleted: boolean;
+  [key: string]: any;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -171,6 +163,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="QA1" component={QA1} />
         <Stack.Screen name="QA2" component={QA2} />

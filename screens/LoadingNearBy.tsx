@@ -3,86 +3,68 @@ import {
   StyleSheet,
   Text,
   View,
-  ActivityIndicator,
   Image,
   ImageBackground,
+  Alert,
 } from "react-native";
 import axios from "axios";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import * as Location from "expo-location";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../App";
 import { Color, FontFamily, FontSize } from "../GlobalStyles";
 import { BASE_URL } from "../config";
 
 const LoadingNearBy = () => {
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList, "Loading">>();
-  const route = useRoute<RouteProp<RootStackParamList, "Loading">>();
-  const {
-    selectedOption,
-    selectedPlan,
-    selectedDistance,
-    butget,
-    selectedActivities,
-    latitude,
-    longitude,
-  } = route.params;
+    useNavigation<NativeStackNavigationProp<RootStackParamList, "LoadingNearBy">>();
 
-  const [places, setPlaces] = useState<any[]>([]); // เก็บข้อมูลจาก API
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
+    const fetchNearbyPlaces = async () => {
+      setIsLoading(true);
 
-    // ✅ เช็คว่ามีพิกัดหรือไม่
-    const useLatLon =
-      latitude !== undefined &&
-      latitude !== null &&
-      longitude !== undefined &&
-      longitude !== null;
-
-    const apiURL = useLatLon
-      ? `${BASE_URL}/search_nearby?latitude=${latitude}&longitude=${longitude}&radius=200`
-      : `${BASE_URL}/search_nearby?postcode=12120&radius=200m`;
-
-    axios
-      .get(apiURL)
-      .then((response) => {
-        setPlaces(response.data.data); // ✅ เก็บข้อมูลสถานที่
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("ไม่ได้รับอนุญาตให้เข้าถึงตำแหน่ง");
         setIsLoading(false);
+        return;
+      }
 
-        // ✅ ไปหน้า Result พร้อมส่งข้อมูล
-        navigation.replace("ResultNearBy", {
-          selectedOption,
-          selectedPlan,
-          selectedDistance,
-          butget,
-          selectedActivities,
-          places: response.data.data, // ✅ ส่งข้อมูลสถานที่ไป Result
-        });
-      })
-      .catch((error) => {
+      let location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/search_nearby?latitude=${latitude}&longitude=${longitude}&radius=200`
+        );
+        const places = res.data.data;
+
+        navigation.replace("ResultNearBy", { places }); // ✅ แบบนี้ไม่ error แล้ว
+
+      } catch (error) {
         console.error("❌ Error fetching data:", error);
+        Alert.alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+      } finally {
         setIsLoading(false);
-      });
-  }, [navigation, latitude, longitude]);
+      }
+    };
+
+    fetchNearbyPlaces();
+  }, []);
 
   return (
     <ImageBackground
-          source={require("../assets/bg_qa_1.jpg")}
-          style={styles.container}
-        >
-          <Image source={require("../assets/loading.gif")} style={styles.gif} />
-          <Text style={styles.title}>ขอให้สนุกกับการเดินทาง</Text>
-          <Text style={styles.subtitle}>
-            {`รอสักครู่ AI กำลังประมวลผล\nเพื่อค้นหาสถานที่ที่เหมาะกับคุณ`}
-          </Text>
-    
-          {/* {isLoading && (
-            <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
-          )} */}
-        </ImageBackground>
+      source={require("../assets/bg_qa_1.jpg")}
+      style={styles.container}
+    >
+      <Image source={require("../assets/loading.gif")} style={styles.gif} />
+      <Text style={styles.title}>ขอให้สนุกกับการเดินทาง</Text>
+      <Text style={styles.subtitle}>
+        {`รอสักครู่ AI กำลังค้นหาสถานที่ใกล้คุณ`}
+      </Text>
+    </ImageBackground>
   );
 };
 

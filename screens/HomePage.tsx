@@ -40,6 +40,19 @@ type ProfileData = {
   latitude: number;
   longitude: number;
 };
+type QAResult = {
+  results_id: number;
+  event_name: string;
+  event_description: string;
+  open_day: string;
+  results_location: string;
+  time_schedule: string;
+  results_img_url: string;
+  distance: string;
+  created_at: string;
+};
+
+
 
 const HomePage = () => {
   const [page, setPage] = useState<number>(0);
@@ -51,6 +64,22 @@ const HomePage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [places, setPlaces] = useState<any[]>([]);
+  const [qaResults, setQaResults] = useState<QAResult[]>([]);
+  const [qaLoading, setQaLoading] = useState(true);
+  
+  const fetchQAResults = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/qa_results`);
+      const sorted = response.data.sort(
+        (a: QAResult, b: QAResult) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      setQaResults(sorted.slice(0, 5)); // 🟢 ได้ผลลัพธ์ 3 รูปล่าสุด
+    } catch (error) {
+      console.error("❌ โหลด QA Results ผิดพลาด:", error);
+    }
+    
+  };
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -81,8 +110,8 @@ const HomePage = () => {
         setLoading(false);
       }
     };
-
     fetchProfile();
+    fetchQAResults();
 
   }, []);
   const fetchPlacesByRegion = async (regionId: number) => {
@@ -272,15 +301,41 @@ const HomePage = () => {
             }
           }}
           activeOpacity={0.7}
-        >
+          >
           <View style={{ marginTop: 20 }}>
             <View style={styles.recommaendContainner}>
               <Text style={styles.title}>รสนิยมการเที่ยว</Text>
             </View>
-            <Image
-              source={require("../assets/history.png")}
-              style={styles.image}
-            />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 10 }}
+            >
+              {qaResults.length === 0 ? (
+                <Text style={{ fontFamily: FontFamily.KanitRegular, fontSize: 16 }}>
+                  ยังไม่มีผลลัพธ์จากแบบสอบถาม
+                </Text>
+              ) : (
+                qaResults.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => navigation.navigate("HistoryResult")}
+                    activeOpacity={0.8}
+                    style={styles.qaCard}
+                  >
+                    <Image
+                      source={{ uri: item.results_img_url }}
+                      style={styles.qaImage}
+                      resizeMode="cover"
+                    />
+                    <Text style={styles.qaTitle} numberOfLines={1}>
+                      {item.event_name}
+                    </Text>
+                  </TouchableOpacity>
+                ))
+              )}
+            </ScrollView>
+
           </View>
         </TouchableOpacity>
 
@@ -360,6 +415,38 @@ const HomePage = () => {
 
 
 const styles = StyleSheet.create({
+
+  qaCard: {
+    width: 250,
+    backgroundColor: "#FFFFFFEE",
+    borderRadius: 16,
+    marginRight: 12,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    alignItems: "center",
+  },
+  
+  qaImage: {
+    width: 220,
+    height: 220,
+    borderRadius: 20,
+    backgroundColor: "#ccc",
+  },
+  
+  qaTitle: {
+    fontSize: 20,
+    fontFamily: FontFamily.KanitRegular,
+    color: "#333",
+    marginTop: 6,
+    textAlign: "center",
+    width: 140,
+    top: 10
+  },
+  
   container: {
     flex: 1,
     backgroundColor: Color.colorWhite,
@@ -368,7 +455,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 30,
-    paddingBottom: 20,
+    paddingBottom: 0,
     paddingTop: 60,
     borderBottomColor: Color.colorWhitesmoke_300,
   },
@@ -402,7 +489,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 300,
     borderRadius: Border.br_3xs,
   },
   imageContent: {

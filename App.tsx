@@ -26,12 +26,13 @@ import Profile from "./screens/Profile";
 import ProfileSetting from "./screens/ProfileSetting";
 import ProfilePicture from "./screens/ProfilePicture";
 import HistoryResult from "./screens/HistoryResult";
+import RegionResult from "./screens/RegionResult";
 
 LogBox.ignoreAllLogs(true);
 
 export type RootStackParamList = {
   Splash: undefined;
-  
+
   QA1: undefined;
   QA2: { selectedOption: string };
   QA3: { selectedOption: string; selectedPlan: number };
@@ -74,6 +75,9 @@ export type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
   HistoryResult: undefined;
+  RegionResult: {
+    region: number;
+  };
 };
 
 type Place = {
@@ -139,21 +143,21 @@ const App = () => {
     "Montserrat-Medium": require("./assets/fonts/Montserrat-Medium.ttf"),
     "Montserrat-Bold": require("./assets/fonts/Montserrat-Bold.ttf"),
     "OleoScriptSwashCaps-Regular": require("./assets/fonts/OleoScriptSwashCaps-Regular.ttf"),
-    "MNNangKaiThot": require("./assets/fonts/MNNangKaiThot.ttf"),
-    "EkkamaiNewBold": require("./assets/fonts/EkkamaiNew-Bold.ttf"),
-    "EkkamaiNewThin": require("./assets/fonts/EkkamaiNew-Thin.ttf"),
-    "EkkamaiNewRegular": require("./assets/fonts/EkkamaiNew-Regular.ttf"),
-    "PrintAble4UBoldItalic": require("./assets/fonts/PrintAble4UBoldItalic.ttf"),
-    "PrintAble4UItalic": require("./assets/fonts/PrintAble4UItalic.ttf"),
-    "PrintAble4URegular": require("./assets/fonts/PrintAble4URegular.ttf"),
-    "PrintAble4UBold": require("./assets/fonts/PrintAble4UBold.ttf"),
-    "KanitThin": require("./assets/fonts/Kanit-Thin.ttf"),
-    "KanitSemiBold": require("./assets/fonts/Kanit-SemiBold.ttf"),
-    "KanitRegular": require("./assets/fonts/Kanit-Regular.ttf"),
-    "KanitMedium": require("./assets/fonts/Kanit-Medium.ttf"),
-    "KanitLight": require("./assets/fonts/Kanit-Light.ttf"),
-    "KanitExtraBold": require("./assets/fonts/Kanit-ExtraBold.ttf"),
-    "KanitBold": require("./assets/fonts/Kanit-Bold.ttf"),
+    MNNangKaiThot: require("./assets/fonts/MNNangKaiThot.ttf"),
+    EkkamaiNewBold: require("./assets/fonts/EkkamaiNew-Bold.ttf"),
+    EkkamaiNewThin: require("./assets/fonts/EkkamaiNew-Thin.ttf"),
+    EkkamaiNewRegular: require("./assets/fonts/EkkamaiNew-Regular.ttf"),
+    PrintAble4UBoldItalic: require("./assets/fonts/PrintAble4UBoldItalic.ttf"),
+    PrintAble4UItalic: require("./assets/fonts/PrintAble4UItalic.ttf"),
+    PrintAble4URegular: require("./assets/fonts/PrintAble4URegular.ttf"),
+    PrintAble4UBold: require("./assets/fonts/PrintAble4UBold.ttf"),
+    KanitThin: require("./assets/fonts/Kanit-Thin.ttf"),
+    KanitSemiBold: require("./assets/fonts/Kanit-SemiBold.ttf"),
+    KanitRegular: require("./assets/fonts/Kanit-Regular.ttf"),
+    KanitMedium: require("./assets/fonts/Kanit-Medium.ttf"),
+    KanitLight: require("./assets/fonts/Kanit-Light.ttf"),
+    KanitExtraBold: require("./assets/fonts/Kanit-ExtraBold.ttf"),
+    KanitBold: require("./assets/fonts/Kanit-Bold.ttf"),
   });
 
   if (!fontsLoaded && !error) {
@@ -162,8 +166,10 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
-
+      <Stack.Navigator
+        initialRouteName="Splash"
+        screenOptions={{ headerShown: false }}
+      >
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="QA1" component={QA1} />
         <Stack.Screen name="QA2" component={QA2} />
@@ -173,6 +179,7 @@ const App = () => {
         <Stack.Screen name="LoadingNearBy" component={LoadingNearBy} />
         <Stack.Screen name="Result" component={Result} />
         <Stack.Screen name="ResultNearBy" component={ResultNearBy} />
+        <Stack.Screen name="RegionResult" component={RegionResult} />
         <Stack.Screen name="HomePage" component={HomePage} />
         <Stack.Screen name="Auth" component={Auth} />
         <Stack.Screen name="SignIn" component={SignIn} />

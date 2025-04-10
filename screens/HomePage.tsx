@@ -23,7 +23,6 @@ import axios from "axios";
 import { BASE_URL } from "../config";
 import * as Location from "expo-location";
 
-
 type DecodedToken = {
   account_id: number;
   account_email: string;
@@ -40,19 +39,15 @@ type ProfileData = {
   latitude: number;
   longitude: number;
 };
-type QAResult = {
-  results_id: number;
-  event_name: string;
-  event_description: string;
-  open_day: string;
-  results_location: string;
-  time_schedule: string;
-  results_img_url: string;
-  distance: string;
-  created_at: string;
+
+type ProviceData = {
+  geography_id: number;
+  place_id: number;
+  place_map: string;
+  place_name: string;
+  place_picture: string;
+  province_th: string;
 };
-
-
 
 const HomePage = () => {
   const [page, setPage] = useState<number>(0);
@@ -63,23 +58,7 @@ const HomePage = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [places, setPlaces] = useState<any[]>([]);
-  const [qaResults, setQaResults] = useState<QAResult[]>([]);
-  const [qaLoading, setQaLoading] = useState(true);
-  
-  const fetchQAResults = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/qa_results`);
-      const sorted = response.data.sort(
-        (a: QAResult, b: QAResult) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-      setQaResults(sorted.slice(0, 5)); // 🟢 ได้ผลลัพธ์ 3 รูปล่าสุด
-    } catch (error) {
-      console.error("❌ โหลด QA Results ผิดพลาด:", error);
-    }
-    
-  };
+  const [places, setPlaces] = useState<ProviceData[]>([]);
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -110,22 +89,21 @@ const HomePage = () => {
         setLoading(false);
       }
     };
-    fetchProfile();
-    fetchQAResults();
 
+    fetchProfile();
   }, []);
+
   const fetchPlacesByRegion = async (regionId: number) => {
     try {
-      const response = await axios.get(`${BASE_URL}/places_by_region/${regionId}`);
+      const response = await axios.get(`${BASE_URL}/province/${regionId}`);
       console.log("📍 ดึงข้อมูลสถานที่:", response.data);
       setPlaces(response.data);
     } catch (error) {
-      //console.error("❌ ดึงข้อมูลสถานที่ผิดพลาด:", error);
+      console.error("❌ ดึงข้อมูลสถานที่ผิดพลาด:", error);
       //Alert.alert("เกิดข้อผิดพลาด", "ไม่สามารถโหลดข้อมูลสถานที่ท่องเที่ยวได้");
     }
   };
-  
-  
+
   useEffect(() => {
     const fetchLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -171,10 +149,9 @@ const HomePage = () => {
     };
 
     checkAuth();
-    
   }, []);
 
-  const data = ["ภาคกลาง", "ภาคเหนือ", "ภาคใต้", "ภาคตะวันออก"];
+  const data = ["ภาคกลาง", "ภาคเหนือ", "ภาคใต้", "ภาคอีสาน"];
   const fetchProfile = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -200,28 +177,27 @@ const HomePage = () => {
     fetchPlacesByRegion(2);
   };
 
-
   useFocusEffect(
     useCallback(() => {
       fetchProfile(); // โหลดข้อมูลใหม่เมื่อเข้าหน้านี้
     }, [])
   );
-  
-  
-  const regionMap = [2, 1, 6, 5]; // index ตามลำดับ: ภาคกลาง, เหนือ, ใต้, ตะวันออก
 
-    const changeTab = async (tab: number) => {
-      setPage(tab);
-      try {
-        const response = await axios.get(`${BASE_URL}/places_by_region/${regionMap[tab]}`);
-        console.log("📍 โหลดข้อมูลภาคใหม่:", response.data);
-        setPlaces(response.data);
-      } catch (error) {
-        //console.error("❌ โหลดข้อมูลภาคผิดพลาด:", error);
-        //Alert.alert("เกิดข้อผิดพลาด", "ไม่สามารถโหลดข้อมูลภาคนี้ได้");
-      }
-    };
+  const regionMap = [2, 1, 6, 3]; // index ตามลำดับ: ภาคกลาง, เหนือ, ใต้, ตะวันออก
 
+  const changeTab = async (tab: number) => {
+    setPage(tab);
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/province/${regionMap[tab]}`
+      );
+      console.log("📍 โหลดข้อมูลภาคใหม่:", response.data);
+      setPlaces(response.data);
+    } catch (error) {
+      console.error("❌ โหลดข้อมูลภาคผิดพลาด:", error);
+      //Alert.alert("เกิดข้อผิดพลาด", "ไม่สามารถโหลดข้อมูลภาคนี้ได้");
+    }
+  };
 
   if (loading) {
     return (
@@ -267,11 +243,11 @@ const HomePage = () => {
           </View>
 
           <View>
-          <Text style={styles.username}>
-            {profile?.account_name && profile.account_name.trim() !== ""
-              ? profile.account_name
-              : "ไม่ระบุ"}
-          </Text>
+            <Text style={styles.username}>
+              {profile?.account_name && profile.account_name.trim() !== ""
+                ? profile.account_name
+                : "ไม่ระบุ"}
+            </Text>
 
             <Text style={styles.email}>
               {profile?.account_email || "ไม่พบอีเมล"}
@@ -281,8 +257,6 @@ const HomePage = () => {
       </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollView}>
         {/* รูปภาพแนะนำสถานที่ */}
-
-        
 
         <TouchableOpacity
           onPress={() => {
@@ -301,98 +275,84 @@ const HomePage = () => {
             }
           }}
           activeOpacity={0.7}
-          >
+        >
           <View style={{ marginTop: 20 }}>
             <View style={styles.recommaendContainner}>
               <Text style={styles.title}>รสนิยมการเที่ยว</Text>
             </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 10 }}
-            >
-              {qaResults.length === 0 ? (
-                <Text style={{ fontFamily: FontFamily.KanitRegular, fontSize: 16 }}>
-                  ยังไม่มีผลลัพธ์จากแบบสอบถาม
-                </Text>
-              ) : (
-                qaResults.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => navigation.navigate("HistoryResult")}
-                    activeOpacity={0.8}
-                    style={styles.qaCard}
-                  >
-                    <Image
-                      source={{ uri: item.results_img_url }}
-                      style={styles.qaImage}
-                      resizeMode="cover"
-                    />
-                    <Text style={styles.qaTitle} numberOfLines={1}>
-                      {item.event_name}
-                    </Text>
-                  </TouchableOpacity>
-                ))
-              )}
-            </ScrollView>
-
+            <Image
+              source={require("../assets/history.png")}
+              style={styles.image}
+            />
           </View>
         </TouchableOpacity>
 
         {/* หมวดหมู่ */}
         {/* หมวดหมู่ */}
-          <View style={styles.categoryContainer}>
-            {data.map((item, index) => (
-              <TouchableOpacity
-                onPress={() => changeTab(index)}
-                key={index}
-                style={[
-                  styles.category,
-                  {
-                    backgroundColor: page === index ? Color.colorWhite : Color.colorWhitesmoke_100,
-                    shadowColor: page === index ? Color.colorBlack : Color.colorWhite,
-                  },
-                ]}
-              >
-                <Text style={styles.categoryText}>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+        <View style={styles.categoryContainer}>
+          {data.map((item, index) => (
+            <TouchableOpacity
+              onPress={() => changeTab(index)}
+              key={index}
+              style={[
+                styles.category,
+                {
+                  backgroundColor:
+                    page === index
+                      ? Color.colorWhite
+                      : Color.colorWhitesmoke_100,
+                  shadowColor:
+                    page === index ? Color.colorBlack : Color.colorWhite,
+                },
+              ]}
+            >
+              <Text style={styles.categoryText}>{item}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-          {/* แสดงสถานที่แนวนอน */}
-          <View style={{ marginTop: 20 }}>
-            {places.length === 0 ? (
-              <Text style={{ fontSize: 16, fontFamily: FontFamily.KanitRegular }}>
-                ไม่พบข้อมูลสถานที่ในภาคนี้
-              </Text>
-            ) : (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.cardScrollView}
-              >
-                {places.map((place, index) => (
+        {/* แสดงสถานที่แนวนอน */}
+        <View style={{ marginTop: 20 }}>
+          {places.length === 0 ? (
+            <Text style={{ fontSize: 16, fontFamily: FontFamily.KanitRegular }}>
+              ไม่พบข้อมูลสถานที่ในภาคนี้
+            </Text>
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.cardScrollView}
+            >
+              {places.splice(5).map((place, index) => (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("RegionResult", {
+                      region: page,
+                    })
+                  }
+                  key={index}
+                >
                   <View key={index} style={styles.placeCard}>
-                    <Text style={styles.placeTitle}>
-                      📍 {place.location_name || "ชื่อไม่พบ"}
-                    </Text>
-                    {place.image_url && (
+                    {place.place_picture && (
                       <Image
-                        source={{ uri: place.image_url }}
+                        source={{ uri: place.place_picture }}
                         style={styles.placeImage}
                         resizeMode="cover"
                       />
                     )}
+                    <Text style={styles.placeTitle}>
+                      📍 {place.place_name || "ชื่อไม่พบ"}
+                    </Text>
+
                     <Text style={styles.placeDescription}>
-                      {place.description || "ไม่มีคำอธิบาย"}
+                      {place.province_th || "ไม่มีคำอธิบาย"}
                     </Text>
                   </View>
-                ))}
-              </ScrollView>
-            )}
-          </View>
-
-        
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
+        </View>
 
         {/* ปุ่มไปหน้าผลลัพธ์ */}
         {/* <TouchableOpacity
@@ -412,10 +372,7 @@ const HomePage = () => {
   );
 };
 
-
-
 const styles = StyleSheet.create({
-
   qaCard: {
     width: 250,
     backgroundColor: "#FFFFFFEE",
@@ -446,7 +403,6 @@ const styles = StyleSheet.create({
     width: 140,
     top: 10
   },
-  
   container: {
     flex: 1,
     backgroundColor: Color.colorWhite,
@@ -455,7 +411,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 30,
-    paddingBottom: 0,
+    paddingBottom: 20,
     paddingTop: 60,
     borderBottomColor: Color.colorWhitesmoke_300,
   },
@@ -489,7 +445,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 300,
+    height: 200,
     borderRadius: Border.br_3xs,
   },
   imageContent: {
@@ -499,7 +455,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: Border.br_3xs,
   },
   surveyButton: {
-    width: "35%",
+    width: "40%",
     marginTop: 30,
     backgroundColor: Color.colorCornflowerblue,
     paddingVertical: 12,
@@ -535,7 +491,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
-    
+
     elevation: 4,
   },
   categoryText: {
@@ -564,7 +520,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 50,
     paddingHorizontal: 17,
-    
   },
   loadingContainer: {
     flex: 1,
@@ -585,12 +540,11 @@ const styles = StyleSheet.create({
   cardScrollView: {
     paddingLeft: 24,
     paddingRight: 12,
-    marginTop: 16,
   },
   placeCard: {
     width: 300,
     backgroundColor: "#FFFFFFCC",
-    padding: 100,
+    padding: 16,
     borderRadius: 16,
     marginRight: 16,
     shadowColor: "#000",
@@ -598,29 +552,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 4,
+    marginVertical: 8,
   },
   placeTitle: {
+    marginTop: 8,
     fontSize: 20,
     fontFamily: FontFamily.KanitRegular,
-    marginBottom: 10,
     color: "#000",
-    top: 60, 
-    right: 80
   },
   placeImage: {
-    width: "80%",
+    width: "100%",
     height: 180,
     borderRadius: 12,
-    marginBottom: 10,
   },
   placeDescription: {
     fontSize: 14,
     fontFamily: FontFamily.KanitRegular,
     color: "#444",
-    top: 60, 
-    right: 50
+    marginLeft: 4,
   },
-  
 });
 
 export default HomePage;

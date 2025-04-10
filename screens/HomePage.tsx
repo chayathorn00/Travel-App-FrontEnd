@@ -50,6 +50,8 @@ const HomePage = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [places, setPlaces] = useState<any[]>([]);
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -74,15 +76,27 @@ const HomePage = () => {
         setProfile(response.data); // ✅ อัปเดตโปรไฟล์
       } catch (err) {
         setError("ไม่สามารถโหลดข้อมูลได้");
-        console.error("❌ Profile Fetch Error:", err);
+        console.error("❌ Profile Fetch Error Home:", err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, []);
 
+  }, []);
+  const fetchPlacesByRegion = async (regionId: number) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/places_by_region/${regionId}`);
+      console.log("📍 ดึงข้อมูลสถานที่:", response.data);
+      setPlaces(response.data);
+    } catch (error) {
+      //console.error("❌ ดึงข้อมูลสถานที่ผิดพลาด:", error);
+      //Alert.alert("เกิดข้อผิดพลาด", "ไม่สามารถโหลดข้อมูลสถานที่ท่องเที่ยวได้");
+    }
+  };
+  
+  
   useEffect(() => {
     const fetchLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -128,6 +142,7 @@ const HomePage = () => {
     };
 
     checkAuth();
+    
   }, []);
 
   const data = ["ภาคกลาง", "ภาคเหนือ", "ภาคใต้", "ภาคตะวันออก"];
@@ -149,11 +164,14 @@ const HomePage = () => {
       setProfile(response.data);
     } catch (err) {
       setError("ไม่สามารถโหลดข้อมูลได้");
-      console.error("❌ Profile Fetch Error:", err);
+      console.error("❌ Profile Fetch Error Home2:", err);
     } finally {
       setLoading(false);
     }
+    fetchPlacesByRegion(2);
   };
+
+
   useFocusEffect(
     useCallback(() => {
       fetchProfile(); // โหลดข้อมูลใหม่เมื่อเข้าหน้านี้
@@ -161,9 +179,20 @@ const HomePage = () => {
   );
   
   
-  const changeTab = (tab: number) => {
-    setPage(tab);
-  };
+  const regionMap = [2, 1, 6, 5]; // index ตามลำดับ: ภาคกลาง, เหนือ, ใต้, ตะวันออก
+
+    const changeTab = async (tab: number) => {
+      setPage(tab);
+      try {
+        const response = await axios.get(`${BASE_URL}/places_by_region/${regionMap[tab]}`);
+        console.log("📍 โหลดข้อมูลภาคใหม่:", response.data);
+        setPlaces(response.data);
+      } catch (error) {
+        //console.error("❌ โหลดข้อมูลภาคผิดพลาด:", error);
+        //Alert.alert("เกิดข้อผิดพลาด", "ไม่สามารถโหลดข้อมูลภาคนี้ได้");
+      }
+    };
+
 
   if (loading) {
     return (
@@ -224,40 +253,7 @@ const HomePage = () => {
       <ScrollView contentContainerStyle={styles.scrollView}>
         {/* รูปภาพแนะนำสถานที่ */}
 
-        <TouchableOpacity
-          onPress={() => {
-            const finalLatitude = latitude || profile?.latitude;
-            const finalLongitude = longitude || profile?.longitude;
-
-            if (
-              finalLatitude &&
-              finalLongitude &&
-              finalLatitude !== 0 &&
-              finalLongitude !== 0
-            ) {
-              navigation.navigate("LoadingNearBy", {
-                selectedOption: "0",
-                selectedPlan: 0,
-                selectedDistance: 0,
-                butget: "0",
-                selectedActivities: [],
-              });
-            } else {
-              Alert.alert("ตำแหน่งไม่พร้อม", "กรุณาอัพเดทตำแหน่งในหน้าโปรไฟล์");
-            }
-          }}
-          activeOpacity={0.7}
-        >
-          <View>
-            <View style={styles.recommaendContainner}>
-              <Text style={styles.title}>ใกล้กับคุณ</Text>
-            </View>
-            <Image
-              source={require("../assets/nearby.png")}
-              style={styles.image}
-            />
-          </View>
-        </TouchableOpacity>
+        
 
         <TouchableOpacity
           onPress={() => {
@@ -289,48 +285,59 @@ const HomePage = () => {
         </TouchableOpacity>
 
         {/* หมวดหมู่ */}
-        <View style={styles.categoryContainer}>
-          {data.map((item, index) => (
-            <TouchableOpacity
-              onPress={() => changeTab(index)}
-              key={index}
-              style={[
-                styles.category,
-                {
-                  backgroundColor:
-                    page === index
-                      ? Color.colorWhite
-                      : Color.colorWhitesmoke_100,
-                  shadowColor:
-                    page === index ? Color.colorBlack : Color.colorWhite,
-                },
-              ]}
-            >
-              <Text style={styles.categoryText}>{item}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        {page === 0 ? (
-          <Image
-            source={require("../assets/center.png")}
-            style={styles.imageContent}
-          />
-        ) : page === 1 ? (
-          <Image
-            source={require("../assets/north.png")}
-            style={styles.imageContent}
-          />
-        ) : page === 2 ? (
-          <Image
-            source={require("../assets/south.png")}
-            style={styles.imageContent}
-          />
-        ) : (
-          <Image
-            source={require("../assets/east.png")}
-            style={styles.imageContent}
-          />
-        )}
+        {/* หมวดหมู่ */}
+          <View style={styles.categoryContainer}>
+            {data.map((item, index) => (
+              <TouchableOpacity
+                onPress={() => changeTab(index)}
+                key={index}
+                style={[
+                  styles.category,
+                  {
+                    backgroundColor: page === index ? Color.colorWhite : Color.colorWhitesmoke_100,
+                    shadowColor: page === index ? Color.colorBlack : Color.colorWhite,
+                  },
+                ]}
+              >
+                <Text style={styles.categoryText}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* แสดงสถานที่แนวนอน */}
+          <View style={{ marginTop: 20 }}>
+            {places.length === 0 ? (
+              <Text style={{ fontSize: 16, fontFamily: FontFamily.KanitRegular }}>
+                ไม่พบข้อมูลสถานที่ในภาคนี้
+              </Text>
+            ) : (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.cardScrollView}
+              >
+                {places.map((place, index) => (
+                  <View key={index} style={styles.placeCard}>
+                    <Text style={styles.placeTitle}>
+                      📍 {place.location_name || "ชื่อไม่พบ"}
+                    </Text>
+                    {place.image_url && (
+                      <Image
+                        source={{ uri: place.image_url }}
+                        style={styles.placeImage}
+                        resizeMode="cover"
+                      />
+                    )}
+                    <Text style={styles.placeDescription}>
+                      {place.description || "ไม่มีคำอธิบาย"}
+                    </Text>
+                  </View>
+                ))}
+              </ScrollView>
+            )}
+          </View>
+
+        
 
         {/* ปุ่มไปหน้าผลลัพธ์ */}
         {/* <TouchableOpacity
@@ -488,6 +495,45 @@ const styles = StyleSheet.create({
   disabledButton: {
     opacity: 0.5,
   },
+  cardScrollView: {
+    paddingLeft: 24,
+    paddingRight: 12,
+    marginTop: 16,
+  },
+  placeCard: {
+    width: 300,
+    backgroundColor: "#FFFFFFCC",
+    padding: 100,
+    borderRadius: 16,
+    marginRight: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  placeTitle: {
+    fontSize: 20,
+    fontFamily: FontFamily.KanitRegular,
+    marginBottom: 10,
+    color: "#000",
+    top: 60, 
+    right: 80
+  },
+  placeImage: {
+    width: "80%",
+    height: 180,
+    borderRadius: 12,
+    marginBottom: 10,
+  },
+  placeDescription: {
+    fontSize: 14,
+    fontFamily: FontFamily.KanitRegular,
+    color: "#444",
+    top: 60, 
+    right: 50
+  },
+  
 });
 
 export default HomePage;

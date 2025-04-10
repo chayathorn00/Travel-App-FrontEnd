@@ -456,48 +456,8 @@ const Profile = () => {
               />
             </View>
           </View>
-          <View style={{ zIndex: 0 }}>
-            <View style={styles.detailContainerProfile}>
-              <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
-                <Text style={styles.uploadButtonText}>
-                  {account_picture ? "เปลี่ยนรูปภาพโปรไฟล์" : "เลือกไฟล์รูปภาพ"}
-                </Text>
-              </TouchableOpacity>
-
-              {account_picture && (
-                <Image
-                  source={{ uri: account_picture }}
-                  style={styles.previewImage}
-                />
-              )}
-            </View>
-          </View>
-          <View style={{ zIndex: 0 }}>
-            <View style={styles.detailContainer}>
-              <TextInput
-                style={styles.textInput}
-                value={latitude !== null ? String(latitude) : ""}
-                placeholder="ละติจูด"
-                editable={edit}
-                onChangeText={(text) =>
-                  setLatitude(text ? parseFloat(text) : null)
-                }
-              />
-            </View>
-          </View>
-          <View style={{ zIndex: 0 }}>
-            <View style={styles.detailContainer}>
-              <TextInput
-                style={styles.textInput}
-                value={longitude !== null ? `${longitude}` : ""}
-                placeholder="ลองจิจูด"
-                editable={edit}
-                onChangeText={(text) =>
-                  setLongitude(text ? parseFloat(text) : null)
-                }
-              />
-            </View>
-          </View>
+          
+          
 
           <Text style={styles.textSubTitle}>ตำแหน่งของคุณ</Text>
 
@@ -683,7 +643,7 @@ const styles = StyleSheet.create({
   detailContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 16,
+    gap: 36,
     zIndex: 9,
   },
   card: {
@@ -725,7 +685,7 @@ const styles = StyleSheet.create({
     bottom: 10, 
   },
   textSubTitle: {
-    fontSize: 16,
+    fontSize: 22,
     // fontWeight: "bold",
     fontFamily: FontFamily.KanitRegular,
   },

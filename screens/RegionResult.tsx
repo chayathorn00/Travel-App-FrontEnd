@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 10,
-    paddingTop: 60,
+    paddingTop: 30,
     borderBottomWidth: 0,
     borderBottomColor: Color.colorWhitesmoke_300,
   },

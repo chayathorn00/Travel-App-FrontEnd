@@ -325,6 +325,7 @@ const Profile = () => {
   };
 
   return (
+    
     <ImageBackground
       source={require("../assets/bg_qa_1.jpg")}
       style={styles.container}
@@ -364,7 +365,9 @@ const Profile = () => {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content}nestedScrollEnabled={true}
+      keyboardShouldPersistTaps="handled">
+        
         {/* Avatar & User Info */}
         <Text style={styles.textTitle}>ข้อมูลโปรไฟล์</Text>
         <View style={styles.card}>
@@ -384,6 +387,7 @@ const Profile = () => {
           <View style={styles.detailContainer}>
             <View style={{ zIndex: 4000 }}>
               <DropDownPicker
+                
                 open={genderOpen} // ✅ ใช้ state ควบคุมการเปิด-ปิด
                 value={gender} // ✅ ใช้ค่า gender ที่อัปเดตได้
                 items={genderList}
@@ -396,50 +400,57 @@ const Profile = () => {
               />
             </View>
           </View>
-          <View style={[styles.detailContainer, { zIndex: 1 }]}>
-            {/* Dropdown for Day */}
-            <View style={{ zIndex: dayOpen ? 3000 : 1 }}>
-              <DropDownPicker
-                open={dayOpen}
-                value={day ?? 0}
-                items={days}
-                setOpen={setDayOpen}
-                setValue={setDay}
-                placeholder="วัน"
-                style={styles.dropdownDate}
-                dropDownContainerStyle={styles.dropdownContainer}
-                disabled={!edit}
-              />
-            </View>
-            {/* Dropdown for Month */}
-            <View style={{ zIndex: monthOpen ? 2000 : 1 }}>
-              <DropDownPicker
-                open={monthOpen}
-                value={month ?? 0}
-                items={months}
-                setOpen={setMonthOpen}
-                setValue={setMonth}
-                placeholder="เดือน"
-                style={styles.dropdownDate}
-                dropDownContainerStyle={styles.dropdownContainer}
-                disabled={!edit}
-              />
-            </View>
-            <View style={{ zIndex: yearOpen ? 1000 : 1 }}>
-              {/* Dropdown for Year */}
-              <DropDownPicker
-                open={yearOpen}
-                value={year ?? 0}
-                items={years}
-                setOpen={setYearOpen}
-                setValue={setYear}
-                placeholder="ปี"
-                style={styles.dropdownDate}
-                dropDownContainerStyle={styles.dropdownContainer}
-                disabled={!edit}
-              />
-            </View>
-          </View>
+          
+              <View style={[styles.detailContainer, { zIndex: 1 }]}>
+                {/* Dropdown for Day */}
+                <View style={{ zIndex: 3000 }}>
+                  <DropDownPicker
+                    open={dayOpen}
+                    value={day ?? 0}
+                    items={days}
+                    setOpen={setDayOpen}
+                    setValue={setDay}
+                    placeholder="วัน"
+                    style={styles.dropdownDate}
+                    dropDownContainerStyle={{ ...styles.dropdownContainer, zIndex: 3000, height: 200 }}
+                    disabled={!edit}
+                    listMode="MODAL"
+                  />
+                </View>
+                {/* Dropdown for Month */}
+                <View style={{ zIndex: 2000 }}>
+                  <DropDownPicker
+                    
+                    open={monthOpen}
+                    value={month ?? 0}
+                    items={months}
+                    setOpen={setMonthOpen}
+                    setValue={setMonth}
+                    placeholder="เดือน"
+                    style={styles.dropdownDate}
+                    dropDownContainerStyle={{ ...styles.dropdownContainer, zIndex: 2000 }}
+                    disabled={!edit}
+                    listMode="MODAL"
+                  />
+                </View>
+                <View style={{ zIndex: 1000 }}>
+                  {/* Dropdown for Year */}
+                  <DropDownPicker
+                    
+                    open={yearOpen}
+                    value={year ?? 0}
+                    items={years}
+                    setOpen={setYearOpen}
+                    setValue={setYear}
+                    placeholder="ปี"
+                    style={styles.dropdownDate}
+                    dropDownContainerStyle={{ ...styles.dropdownContainer, zIndex: 1000 ,height: 200,}}
+                    disabled={!edit}
+                    listMode="MODAL"
+                  />
+                </View>
+              </View>
+            
           <View style={{ zIndex: 0 }}>
             <View style={styles.detailContainer}>
               <TextInput
@@ -457,8 +468,6 @@ const Profile = () => {
             </View>
           </View>
           
-          
-
           <Text style={styles.textSubTitle}>ตำแหน่งของคุณ</Text>
 
           <LongdoMapView
@@ -519,7 +528,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 30,
     paddingBottom: 16,
   },
   avatar: {
@@ -550,6 +559,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
   },
+  
   content: {
     paddingVertical: 10,
     paddingHorizontal: 30,
@@ -606,7 +616,10 @@ const styles = StyleSheet.create({
     color: "#aaa",
   },
   dropdownDate: {
-    width: 85,
+    
+    width: 94,
+    marginHorizontal: -16,
+    left:16,
     borderColor: "#ccc",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -617,9 +630,21 @@ const styles = StyleSheet.create({
     color: "#aaa",
   },
   dropdownContainer: {
+    
     borderColor: "#ccc",
+    width: 94,
+    marginHorizontal: -16,
+    left:16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 1,
+    fontSize: 12,
+    color: "#aaa",
   },
   textInput: {
+    
     width: "100%",
     padding: 10,
     borderWidth: 1,
@@ -678,11 +703,11 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.KanitRegular,
   },
   textTitle: {
-    fontSize: 27,
+    fontSize: 23,
     fontFamily: FontFamily.KanitRegular,
     // fontWeight: "bold",
     left: 30,
-    bottom: 10, 
+    bottom: 5, 
   },
   textSubTitle: {
     fontSize: 22,

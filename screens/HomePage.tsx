@@ -49,6 +49,19 @@ type ProviceData = {
   province_th: string;
 };
 
+type QAResult = {
+  results_id: number;
+  event_name: string;
+  event_description: string;
+  open_day: string;
+  results_location: string;
+  time_schedule: string;
+  results_img_url: string;
+  distance: string;
+  created_at: string;
+};
+
+
 const HomePage = () => {
   const [page, setPage] = useState<number>(0);
   const [email, setEmail] = useState<string | null>(null);
@@ -59,11 +72,42 @@ const HomePage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [places, setPlaces] = useState<ProviceData[]>([]);
+  const [qaResults, setQaResults] = useState<QAResult[]>([]);
+
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
+    const fetchProfileAndPlaces = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.warn("❌ No Token Found. Redirecting to Auth.");
+          navigation.replace("Auth");
+          return;
+        }
+        const decoded: DecodedToken = jwtDecode(token);
+        const response = await axios.get(
+          `${BASE_URL}/accounts_list/${decoded.account_id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setProfile(response.data);
+        
+        // ✅ เพิ่มตรงนี้ โหลดข้อมูลภาคกลาง (regionId = 2)
+        await fetchPlacesByRegion(2);
+        setPage(0); // ตั้งให้เริ่มต้นที่ภาคกลาง
+      } catch (err) {
+        setError("ไม่สามารถโหลดข้อมูลได้");
+        console.error("❌ Profile Fetch Error Home:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchProfileAndPlaces();
     const fetchProfile = async () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
@@ -91,8 +135,24 @@ const HomePage = () => {
     };
 
     fetchProfile();
+    
   }, []);
-
+  useEffect(() => {
+    const fetchQAResults = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/qa_results`);
+        const sorted = res.data.sort(
+          (a: QAResult, b: QAResult) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        setQaResults(sorted.slice(0, 5));
+      } catch (error) {
+        console.error("❌ Error loading QA Results:", error);
+      }
+    };
+  
+    fetchQAResults();
+  }, []);
   const fetchPlacesByRegion = async (regionId: number) => {
     try {
       const response = await axios.get(`${BASE_URL}/province/${regionId}`);
@@ -174,11 +234,13 @@ const HomePage = () => {
     } finally {
       setLoading(false);
     }
-    fetchPlacesByRegion(2);
+    
   };
 
   useFocusEffect(
     useCallback(() => {
+      fetchPlacesByRegion(2);
+      setPage(0);
       fetchProfile(); // โหลดข้อมูลใหม่เมื่อเข้าหน้านี้
     }, [])
   );
@@ -280,10 +342,36 @@ const HomePage = () => {
             <View style={styles.recommaendContainner}>
               <Text style={styles.title}>รสนิยมการเที่ยว</Text>
             </View>
-            <Image
-              source={require("../assets/history.png")}
-              style={styles.image}
-            />
+            {qaResults.length === 0 ? (
+              <Text style={{ fontSize: 16, fontFamily: FontFamily.KanitRegular }}>
+                ไม่พบข้อมูล
+              </Text>
+            ) : (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.cardScrollView}
+              >
+                {qaResults.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => navigation.navigate("HistoryResult")}
+                    activeOpacity={0.8}
+                  >
+                    <View style={styles.qaCard2}>
+                      <Image
+                        source={{ uri: item.results_img_url }}
+                        style={styles.qaImage2}
+                      />
+                      <Text style={styles.qaTitle2} numberOfLines={2}>
+                      📍{item.event_name}
+                      </Text>
+                      <Text style={styles.description}>⏰เปิด: {item.open_day}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
           </View>
         </TouchableOpacity>
 
@@ -323,7 +411,7 @@ const HomePage = () => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.cardScrollView}
             >
-              {places.splice(5).map((place, index) => (
+              {places.slice(0, 5).map((place, index) => (
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate("RegionResult", {
@@ -373,6 +461,30 @@ const HomePage = () => {
 };
 
 const styles = StyleSheet.create({
+  qaCard2: {
+    width: 300,
+    backgroundColor: "#FFFFFF",
+    padding: 16,
+    borderRadius: 16,
+    marginRight: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+    marginVertical: 8,
+  },
+  qaImage2: {
+    width: "100%",
+    height: 180,
+    borderRadius: 12,
+  },
+  qaTitle2: {
+    marginTop: 8,
+    fontSize: 20,
+    fontFamily: FontFamily.KanitRegular,
+    color: "#000",
+  },
   qaCard: {
     width: 250,
     backgroundColor: "#FFFFFFEE",
@@ -412,7 +524,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 30,
     paddingBottom: 20,
-    paddingTop: 60,
+    paddingTop: 30,
     borderBottomColor: Color.colorWhitesmoke_300,
   },
   avatar: {
@@ -428,7 +540,7 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 17,
-    fontFamily: FontFamily.nunitoRegular,
+    fontFamily: FontFamily.KanitRegular,
     color: Color.gray1,
   },
   title: {
@@ -438,6 +550,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     padding: 24,
+    bottom: 45,
+    paddingLeft: 20,
+    paddingRight: 0,
   },
   imageContainer: {
     marginTop: 40,
@@ -476,14 +591,16 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorWhitesmoke_100,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    paddingHorizontal: 4,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    right:10
   },
   category: {
     backgroundColor: Color.colorWhite,
     paddingVertical: 7,
     paddingHorizontal: 10,
     borderRadius: Border.br_81xl,
-    marginVertical: 4,
+    marginVertical: 6,
     shadowColor: Color.colorBlack,
     shadowOffset: {
       width: 0,
@@ -516,7 +633,7 @@ const styles = StyleSheet.create({
     zIndex: 9,
     backgroundColor: "#FFFFFCCC",
     left: 11,
-    top: 11,
+    top: 16,
     paddingVertical: 10,
     borderRadius: 50,
     paddingHorizontal: 17,
@@ -538,12 +655,12 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   cardScrollView: {
-    paddingLeft: 24,
-    paddingRight: 12,
+    paddingLeft: 6,
+    paddingRight: 24,
   },
   placeCard: {
     width: 300,
-    backgroundColor: "#FFFFFFCC",
+    backgroundColor: "#FFFFFF",
     padding: 16,
     borderRadius: 16,
     marginRight: 16,
@@ -565,12 +682,19 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 12,
   },
+  description: {
+    fontSize: 14,
+    fontFamily: FontFamily.KanitRegular,
+    color: "#444",
+    marginLeft: 4,
+  },
   placeDescription: {
     fontSize: 14,
     fontFamily: FontFamily.KanitRegular,
     color: "#444",
     marginLeft: 4,
   },
+  
 });
 
 export default HomePage;

@@ -81,7 +81,7 @@ const HistoryResult = () => {
         >
           <IcBack width={24} height={24} />
         </Pressable>
-        <Text style={styles.title}>ประวัติสถานที่ท่องเที่ยว</Text>
+        <Text style={styles.title}>สถานที่ตรงใจ :))</Text>
       </View>
 
 
@@ -132,8 +132,8 @@ const HistoryResult = () => {
 const styles = StyleSheet.create({
   backIcon: {
     position: "absolute",
-    left: 30,
-    top: 72,
+    left: 20,
+    top: 45,
     zIndex: 10,
   },  
   container: {
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingVertical: 15,
-    paddingTop: 60,
+    paddingTop: 30,
     borderBottomWidth: 0,
     borderBottomColor: Color.colorWhitesmoke_300,
   },
@@ -223,6 +223,7 @@ const styles = StyleSheet.create({
     width: "30%",
     backgroundColor: "#B7B7B7",
     marginBottom: 40,
+  
   },
 });
 

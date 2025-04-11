@@ -116,7 +116,7 @@ const RegionResult = () => {
         <ScrollView contentContainerStyle={styles.scrollView}>
           {places.length > 0 ? (
             places.map((place) => (
-              <View key={place.place_id} style={styles.card}>
+              <View key={place.place_id} style={[styles.card, {marginBottom: 100}]}>
                 <Image
                   source={{ uri: place.place_picture }}
                   style={styles.image}

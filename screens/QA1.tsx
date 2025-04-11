@@ -59,7 +59,7 @@ const QA1 = () => {
           }
         />
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.detailContainer}>
+          <View style={[styles.detailContainer,{marginBottom: 100}]}>
             <Progress progress="25" />
             <Text style={styles.title}>ความสนใจของคุณ</Text>
 

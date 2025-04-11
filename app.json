@@ -1,15 +1,15 @@
 {
-  "name": "YourAppName",
-  "displayName": "YourAppName",
+  "name": "NexTrip",
+  "displayName": "NexTrip",
   "expo": {
-    "name": "senior_project",
-    "slug": "senior_project",
+    "name": "NexTrip",
+    "slug": "NexTrip",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -41,7 +41,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "7d023cdf-392b-4fc2-86ab-6fece33f9933"
+        "projectId": "ec688c5b-0dc9-4bd4-b386-d3d330dd312a"
       }
     },
     "plugins": [

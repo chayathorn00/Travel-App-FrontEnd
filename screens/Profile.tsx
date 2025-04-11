@@ -500,7 +500,7 @@ const Profile = () => {
         <TouchableOpacity
           style={[
             styles.editButton,
-            { width: "40%", backgroundColor: "#B7B7B7", marginTop: 30 },
+            { width: "40%", backgroundColor: "#B7B7B7", marginTop: 30, marginBottom: 100 },
           ]}
           onPress={signout} // ✅ เรียกใช้ฟังก์ชัน logout
         >
@@ -599,6 +599,7 @@ const styles = StyleSheet.create({
   },
   logout: {
     marginTop: 20,
+    marginBottom: 20,
   },
   logoutText: {
     color: "red",

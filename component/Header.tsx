@@ -4,6 +4,7 @@ import Close from "../assets/close.svg";
 import IcNext from "../assets/ic_next.svg";
 import IcBack from "../assets/ic_back.svg";
 import { FontFamily } from "../GlobalStyles";
+import { StatusBar } from 'expo-status-bar';
 
 import { useNavigation } from "@react-navigation/core";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -20,6 +21,8 @@ const Header: React.FC<Props> = ({ page, isClose = false, next, previous }) => {
 
   return (
     <View style={styles.container}>
+      <StatusBar hidden />
+
       {isClose && (
         <TouchableOpacity
           onPress={() => navigation.navigate("HomePage")}

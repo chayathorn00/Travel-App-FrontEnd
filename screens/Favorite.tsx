@@ -14,7 +14,6 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App"; // นำเข้า Type ของ Stack Navigator
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
-import Carousel from "react-native-snap-carousel";
 import CalendarIcon from "../assets/calendar.svg";
 import MapIcon from "../assets/map.svg";
 import TimeIcon from "../assets/time.svg";

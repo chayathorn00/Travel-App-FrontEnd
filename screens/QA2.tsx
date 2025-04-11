@@ -67,7 +67,7 @@ const QA2 = () => {
         }
       />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.optionContainer}>
+        <View style={[styles.optionContainer,{marginBottom: 100}]}>
           <Progress progress="50" />
           <Text
             style={styles.title}

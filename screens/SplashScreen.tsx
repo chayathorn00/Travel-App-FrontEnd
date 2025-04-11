@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { StatusBar } from 'expo-status-bar';
 
 
 type SplashScreenProps = {
@@ -24,6 +25,8 @@ export default function SplashScreen({ navigation }: SplashScreenProps) {
           style={styles.background}
           resizeMode="cover"
         >
+          <StatusBar hidden />
+          
           {/* Overlay */}
           <View style={styles.overlay} />
     

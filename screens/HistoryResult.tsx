@@ -87,43 +87,44 @@ const HistoryResult = () => {
 
       <ScrollView contentContainerStyle={styles.scrollView}>
         
+        <View style={[ {marginBottom: 100}]}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            qaResults
+            
+              .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+              .slice(0, 10)
+              .map((place) => (
+              <View key={place.results_id} style={styles.card}>
+                <Image
+                  source={{ uri: place.results_img_url }}
+                  style={styles.image}
+                />
+                <View style={styles.infoContainer}>
+                  <Text style={styles.placeName}>{place.event_name}</Text>
+                  <Text style={styles.description}>{place.event_description}</Text>
+                  <Text style={styles.description}>⏰เปิด: {place.open_day}</Text>
+                  <Text style={styles.description}>⏰เวลา: {place.time_schedule}</Text>
+                  <View style={styles.details}>
+                    <MapIcon style={{ marginTop: 4 }} width={14} height={14} />
+                    <Text style={styles.description}>
+                    {place.results_location}
+                    </Text>
+                  </View>
+                  <Text style={styles.description}>🚶{place.distance}</Text>
 
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          qaResults
-          
-            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-            .slice(0, 10)
-            .map((place) => (
-            <View key={place.results_id} style={styles.card}>
-              <Image
-                source={{ uri: place.results_img_url }}
-                style={styles.image}
-              />
-              <View style={styles.infoContainer}>
-                <Text style={styles.placeName}>{place.event_name}</Text>
-                <Text style={styles.description}>{place.event_description}</Text>
-                <Text style={styles.description}>⏰เปิด: {place.open_day}</Text>
-                <Text style={styles.description}>⏰เวลา: {place.time_schedule}</Text>
-                <View style={styles.details}>
-                  <MapIcon style={{ marginTop: 4 }} width={14} height={14} />
-                  <Text style={styles.description}>
-                  {place.results_location}
-                  </Text>
+                  <TouchableOpacity
+                    style={styles.routeButton}
+                    onPress={() => openGoogleMaps(place.event_name)}
+                  >
+                    <Text style={styles.routeText}>ค้นหาเส้นทาง</Text>
+                  </TouchableOpacity>
                 </View>
-                <Text style={styles.description}>🚶{place.distance}</Text>
-
-                <TouchableOpacity
-                  style={styles.routeButton}
-                  onPress={() => openGoogleMaps(place.event_name)}
-                >
-                  <Text style={styles.routeText}>ค้นหาเส้นทาง</Text>
-                </TouchableOpacity>
               </View>
-            </View>
-          ))
-        )}
+            ))
+          )}
+        </View>
       </ScrollView>
     </ImageBackground>
   );

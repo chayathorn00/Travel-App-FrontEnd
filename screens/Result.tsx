@@ -103,6 +103,7 @@ const Result = () => {
         />
       ) : (
         <ScrollView contentContainerStyle={styles.scrollView}>
+          <View style={[{marginBottom: 100}]}>
           {filteredResults.length > 0 ? (
             filteredResults.map((place) => (
               <View key={place.results_id} style={styles.card}>
@@ -152,6 +153,7 @@ const Result = () => {
           >
             <Text style={styles.routeText}>ดูข้อมูลเพิ่มเติม</Text>
           </TouchableOpacity>
+          </View>
         </ScrollView>
       )}
     </ImageBackground>

@@ -1,7 +1,6 @@
 {
   "cli": {
-    "version": ">= 16.3.0",
-    "appVersionSource": "remote"
+    "version": ">= 3.13.0"
   },
   "build": {
     "development": {
@@ -9,10 +8,21 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "ANDROID_BUILD_JAVA_VERSION": "17"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EAS_BUILD_PRE_INSTALL_SCRIPT": "./eas-build-pre-install.sh"
+      }
     }
   },
   "submit": {

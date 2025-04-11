@@ -134,7 +134,7 @@ const RegionResult = () => {
 
                   <TouchableOpacity
                     style={styles.routeButton}
-                    onPress={() => openGoogleMaps(place.place_map)}
+                    onPress={() => openGoogleMaps(place.place_name + ' ' + place.province_th)}
                   >
                     <Text style={styles.routeText}>ดูเส้นทาง</Text>
                   </TouchableOpacity>

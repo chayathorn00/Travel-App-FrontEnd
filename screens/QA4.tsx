@@ -42,7 +42,7 @@ const QA4 = () => {
           id: item.picture_id.toString(), // ใช้ `picture_id` เป็น `id`
           label: item.theme, // ใช้ `theme` เป็น `label`
         }));
-        formattedActivities.push({ id: "custom", label: "+ กำหนดกิจกรรมเอง" });
+        //formattedActivities.push({ id: "custom", label: "+ กำหนดกิจกรรมเอง" });
         setActivities(formattedActivities);
       })
       .catch((error) => console.error("Error fetching activities:", error))
@@ -69,7 +69,7 @@ const QA4 = () => {
           navigation.goBack();
         }}
         next={
-          selectedActivities.length >= 3
+          selectedActivities.length >= 1
             ? () => {
                 navigation.navigate("Loading", {
                   selectedOption,

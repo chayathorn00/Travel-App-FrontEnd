@@ -72,7 +72,7 @@ const Profile = () => {
   const [genderList, setGenderList] = React.useState([
     { label: "ชาย", value: "male" },
     { label: "หญิง", value: "female" },
-    { label: "อื่นๆ", value: "other" },
+    { label: "LGBTQIA+", value: "other" },
     { label: "ไม่ระบุ", value: "none" },
   ]);
   const [genderOpen, setGenderOpen] = useState(false);

@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     color: "#858585",
     textAlign: "center",
     marginBottom: 20,
-    lineHeight: 18,
+    lineHeight: 25,
   },
   gif: {
     width: 200,

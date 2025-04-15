@@ -89,7 +89,7 @@ const Result = () => {
             navigation.pop();
           }}
         >
-          <IcBack width={24} height={24} />
+          
         </Pressable>
         <Text style={styles.title}>หวังว่าคุณจะชอบ :)</Text>
         <View />

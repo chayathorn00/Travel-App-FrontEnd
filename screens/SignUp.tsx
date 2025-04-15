@@ -20,6 +20,7 @@ import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { BASE_URL } from "../config";
 import Header from "../component/Header";
 import IcBack from "../assets/ic_back.svg";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const SignUp = () => {
   const navigation =
@@ -66,6 +67,12 @@ const SignUp = () => {
   };
 
   return (
+    <KeyboardAwareScrollView
+      contentContainerStyle={{ flexGrow: 1, justifyContent: "center", padding: 0 }}
+      enableOnAndroid={true}
+      extraScrollHeight={30}
+      keyboardShouldPersistTaps="handled"
+      >
     <ImageBackground
       source={require("../assets/register.png")}
       style={styles.background}
@@ -81,7 +88,7 @@ const SignUp = () => {
         <IcBack width={24} height={24} />
       </Pressable>
       <View>
-        <Text style={styles.title}>ลงทะเบียนสมัครสมาชิก</Text>
+        <Text style={styles.title}>ลงทะเบียนสมาชิก</Text>
 
         <View style={styles.container}>
           {/* Input Email */}
@@ -130,7 +137,9 @@ const SignUp = () => {
         </TouchableOpacity>
         {/* ปุ่ม Back */}
       </View>
+      
     </ImageBackground>
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -158,8 +167,9 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorWhite,
     marginBottom: 30,
-    left: 0,
+    left: 23,
     top: -25,
+    
   },
   backBtn: {
     position: "absolute",

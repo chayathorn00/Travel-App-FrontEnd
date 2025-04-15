@@ -22,6 +22,7 @@ import EyeOff from "../assets/eye-off.svg";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { BASE_URL } from "../config";
 import IcBack from "../assets/ic_back.svg";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const SignIn = () => {
   const navigation =
@@ -67,6 +68,12 @@ const SignIn = () => {
   };
 
   return (
+    <KeyboardAwareScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center", padding: 0 }}
+          enableOnAndroid={true}
+          extraScrollHeight={30}
+          keyboardShouldPersistTaps="handled"
+          >
     <ImageBackground
       source={require("../assets/singin.png")}
       style={styles.background}
@@ -125,6 +132,7 @@ const SignIn = () => {
         </TouchableOpacity>
       </View>
     </ImageBackground>
+    </KeyboardAwareScrollView>
   );
 };
 

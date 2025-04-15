@@ -19,6 +19,8 @@ import Header from "../component/Header";
 import Progress from "../component/Progress";
 import Bank from "../assets/Bank.svg";
 import { BASE_URL } from "../config";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 
 const QA3 = () => {
   const navigation =
@@ -49,6 +51,12 @@ const QA3 = () => {
       style={styles.container}
     >
       <SafeAreaView />
+      <KeyboardAwareScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      enableOnAndroid={true}
+      extraScrollHeight={30}
+      keyboardShouldPersistTaps="handled"
+      >
       <Header
         page="3"
         previous={() => {
@@ -111,6 +119,7 @@ const QA3 = () => {
           <Bank width={20} height={20} />
         </View>
       </ScrollView>
+      </KeyboardAwareScrollView>
     </ImageBackground>
   );
 };

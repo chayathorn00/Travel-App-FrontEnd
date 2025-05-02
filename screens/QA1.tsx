@@ -62,7 +62,7 @@ const QA1 = () => {
           <View style={[styles.detailContainer,{marginBottom: 100}]}>
             <Progress progress="25" />
             <Text style={styles.title}>ความสนใจของคุณ</Text>
-
+            <Text style={styles.subtitle}>(เลือกได้เพียง 1 ข้อ)</Text>
             {/* Grid ตัวเลือก */}
             <View style={styles.imageGrid}>
               {places.map((place) => (
@@ -114,7 +114,14 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
-    marginBottom: 20,
+    marginBottom: 0,
+    textAlign: "center",
+  },
+  subtitle:{
+    fontSize: 20,
+    fontFamily: FontFamily.KanitLight,
+    color: Color.colorBlack,
+    marginBottom: 0,
     textAlign: "center",
   },
   imageGrid: {

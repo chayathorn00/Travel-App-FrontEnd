@@ -32,7 +32,10 @@ const QA3 = () => {
     { distance_id: number; distance_km: string }[]
   >([]);
   const [selectedDistance, setSelectedDistance] = useState<number | null>(null);
-  const [butget, setButget] = useState<string>("");
+  const [budgets, setBudgets] = useState<
+    { value_id: number; value_money: string }[]
+  >([]);
+  const [selectedBudget, setSelectedBudget] = useState<number | null>(null);
 
   useEffect(() => {
     axios
@@ -43,8 +46,19 @@ const QA3 = () => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+    axios
+      .get(`${BASE_URL}/qa_value`)
+      .then((response) => {
+        setBudgets(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching budget data:", error);
+      });
   }, []);
-
+  useEffect(() => {
+    console.log("budgets from backend:", budgets); // ✅ ดูว่ามีข้อมูลไหม
+  }, [budgets]);
+  
   return (
     <ImageBackground
       source={require("../assets/bg_qa_1.jpg")}
@@ -63,17 +77,17 @@ const QA3 = () => {
           navigation.goBack();
         }}
         next={
-          selectedDistance && butget
+          selectedDistance && selectedBudget !== null
             ? () => {
                 navigation.navigate("QA4", {
-                  selectedOption, // ✅ ส่งค่าที่เลือกจาก QA1
-                  selectedPlan, // ✅ ส่งค่าที่เลือกจาก QA2
-                  selectedDistance, // ✅ ส่งค่าที่เลือกจาก QA3
-                  butget, // ✅ ส่งค่าที่เลือกจาก QA3
+                  selectedOption,
+                  selectedPlan,
+                  selectedDistance,
+                  butget: selectedBudget.toString(), // ✅ แปลงเป็น string ตามที่ TypeScript คาด
                 });
               }
             : undefined
-        }
+        }        
       />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Progress progress="75" />
@@ -105,19 +119,30 @@ const QA3 = () => {
 
         {/* งบประมาณ */}
         <Text style={styles.title}>งบประมาณในการเดินทาง</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            onChangeText={(text) => {
-              const numericValue = text.replace(/[^0-9]/g, ""); // ✅ ลบอักขระที่ไม่ใช่ตัวเลข
-              setButget(numericValue);
-            }}
-            value={butget} // ✅ แสดงค่าใน input
-            keyboardType="numeric"
-            style={styles.input}
-            placeholder="กรอกงบประมาณ"
-          />
-          <Bank width={20} height={20} />
+        <View style={styles.optionGrid}>
+          {budgets.map((budget) => (
+            <TouchableOpacity
+              key={budget.value_id}
+              style={[
+                styles.option,
+                selectedBudget === budget.value_id && styles.optionSelected,
+              ]}
+              onPress={() => setSelectedBudget(Number(budget.value_id))}
+
+            >
+              <Text
+                style={[
+                  styles.optionText,
+                  selectedBudget === budget.value_id && styles.optionTextSelected,
+                ]}
+              >
+                {budget.value_money}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
+      
+
       </ScrollView>
       </KeyboardAwareScrollView>
     </ImageBackground>

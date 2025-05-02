@@ -40,20 +40,20 @@ const Result = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, "Result">>();
   const route = useRoute<RouteProp<RootStackParamList, "Result">>();
-  const { account_id } = route.params; // ✅ ดึงค่า account_id จาก params
+  const { account_id } = route.params; //ดึงค่า account_id จาก params
 
-  // 🟢 สร้าง state สำหรับข้อมูลและสถานะโหลด
+  // สร้าง state สำหรับข้อมูลและสถานะโหลด
   const [filteredResults, setFilteredResults] = useState<ResultItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Fetch Data จาก API
+  // Fetch Data จาก API
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`${BASE_URL}/qa_results`);
         const data: ResultItem[] = await response.json();
 
-        // ✅ กรองเฉพาะข้อมูลที่ account_id ตรงกัน
+        // กรองเฉพาะข้อมูลที่ account_id ตรงกัน
         const filteredData = data.filter(
           (item) => item.account_id === account_id
         );
@@ -68,7 +68,7 @@ const Result = () => {
     fetchData();
   }, [account_id]);
 
-  // 🔹 ฟังก์ชันเปิด Google Maps
+  // ฟังก์ชันเปิด Google Maps
   const openGoogleMaps = (location: string) => {
     Linking.openURL(
       `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(

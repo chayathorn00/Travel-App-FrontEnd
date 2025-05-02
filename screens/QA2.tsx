@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_mini,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
+    
   },
   optionGrid: {
     flexDirection: "row",

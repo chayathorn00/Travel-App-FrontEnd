@@ -39,8 +39,8 @@ const QA4 = () => {
       .then((response) => response.json())
       .then((data) => {
         const formattedActivities = data.map((item: any) => ({
-          id: item.picture_id.toString(), // ใช้ `picture_id` เป็น `id`
-          label: item.theme, // ใช้ `theme` เป็น `label`
+          id: item.activity_id.toString(), // ใช้ `picture_id` เป็น `id`
+          label: item.activity_name, // ใช้ `theme` เป็น `label`
         }));
         //formattedActivities.push({ id: "custom", label: "+ กำหนดกิจกรรมเอง" });
         setActivities(formattedActivities);

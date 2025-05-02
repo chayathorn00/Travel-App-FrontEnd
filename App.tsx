@@ -50,6 +50,7 @@ export type RootStackParamList = {
     selectedActivities: string[];
     latitude?: number | null;
     longitude?: number | null;
+    selectedEmotion: string;
   };
   Result: {
     selectedOption: string;

@@ -16,6 +16,7 @@ import { RootStackParamList } from "../App";
 import { Color, FontFamily, FontSize } from "../GlobalStyles";
 import { BASE_URL } from "../config";
 
+
 const Loading = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, "Loading">>();
@@ -27,6 +28,7 @@ const Loading = () => {
     selectedDistance,
     butget,
     selectedActivities,
+    selectedEmotion
   } = route.params;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -68,8 +70,9 @@ const Loading = () => {
         trip_id: selectedPlan,
         distance_id: selectedDistance,
         budget: butget,
-        location_interest_id: selectedOption,
+        location_interest_id: Number(selectedOption),
         activity_interest_id: selectedActivities.map(Number),
+        emotional_id: Number(selectedEmotion),
       };
 
       console.log("📤 Sending data:", payload);

@@ -33,7 +33,37 @@ const QA4 = () => {
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [customActivity, setCustomActivity] = useState("");
   const [loading, setLoading] = useState(true);
-
+  const [emotions, setEmotions] = useState<{ id: string; label: string }[]>([]);
+  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
+  
+  const getEmoji = (label: string) => {
+    switch (label) {
+      case "รู้สึกมีความรัก":
+        return "❤️";
+      case "รู้สึกมีความสุข":
+        return "😊";
+      case "รู้สึกสบายๆ":
+        return "😌";
+      case "รู้สึกเศร้า":
+        return "😢";
+      case "รู้สึกเหนื่อยล้า":
+        return "😩";
+      case "รู้สึกหิว":
+        return "😋";
+      case "รู้สึกเซ็ง":
+        return "😑";
+      case "รู้สึกโกรธ":
+        return "😠";
+      case "รู้สึกเบื่อ":
+        return "🥱";
+      case "รู้สึกเพิ่งเสร็จงาน":
+        return "🏁";
+      default:
+        return "❓";
+    }
+  };
+  
+  
   useEffect(() => {
     fetch(`${BASE_URL}/qa_activity`)
       .then((response) => response.json())
@@ -48,6 +78,21 @@ const QA4 = () => {
       .catch((error) => console.error("Error fetching activities:", error))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetch(`${BASE_URL}/qa_emotional`)
+      .then((response) => response.json())
+      .then((data) => {
+        const formatted = data.map((item: any) => ({
+          id: item.emotional_id.toString(),
+          label: item.emotional_name,
+        }));
+        setEmotions(formatted);
+      })
+      .catch((error) => console.error("Error fetching emotions:", error));
+  }, []);
+  
+  
 
   const toggleActivity = (id: string) => {
     setSelectedActivities((prevSelected) =>
@@ -69,7 +114,7 @@ const QA4 = () => {
           navigation.goBack();
         }}
         next={
-          selectedActivities.length >= 1
+          selectedActivities.length >= 1 && selectedEmotion
             ? () => {
                 navigation.navigate("Loading", {
                   selectedOption,
@@ -77,10 +122,12 @@ const QA4 = () => {
                   selectedDistance,
                   butget,
                   selectedActivities,
+                  selectedEmotion, // <<<< ส่งไปด้วย
                 });
               }
             : undefined
         }
+        
       />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Progress progress="100" />
@@ -116,18 +163,31 @@ const QA4 = () => {
             ))}
           </View>
         )}
+        <Text style={styles.title}>ตอนนี้คุณรู้สึกแบบไหน?</Text>
+        <View style={styles.optionGrid}>
+          {emotions.map((emotion) => (
+            <TouchableOpacity
+              key={emotion.id}
+              style={[
+                styles.option,
+                selectedEmotion === emotion.id && styles.optionSelected,
+              ]}
+              onPress={() => setSelectedEmotion(emotion.id)}
+            >
+              <Text
+                style={[
+                  styles.optionText,
+                  selectedEmotion === emotion.id && styles.optionTextSelected,
+                ]}
+              >
+                {getEmoji(emotion.label)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-        {selectedActivities.includes("custom") && (
-          <TextInput
-            style={styles.input}
-            placeholder="ระบุกิจกรรมของคุณ"
-            placeholderTextColor={Color.colorGray_200}
-            value={customActivity}
-            onChangeText={(text) => setCustomActivity(text)}
-            keyboardType="default"
-            autoCapitalize="none"
-          />
-        )}
+        
+
       </ScrollView>
     </ImageBackground>
   );

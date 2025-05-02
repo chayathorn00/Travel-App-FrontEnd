@@ -32,11 +32,10 @@ const QA3 = () => {
     { distance_id: number; distance_km: string }[]
   >([]);
   const [selectedDistance, setSelectedDistance] = useState<number | null>(null);
-  const [budgets, setBudgets] = useState<
-    { value_id: number; value_money: string }[]
-  >([]);
-  const [selectedBudget, setSelectedBudget] = useState<number | null>(null);
-
+  //const [butget, setButget] = useState<string>("");
+  const [values, setValues] = useState<{ value_id: number; value_money: string }[]>([]);
+  const [selectedValue, setSelectedValue] = useState<number | null>(null);
+  
   useEffect(() => {
     axios
       .get(`${BASE_URL}/qa_distance`)
@@ -49,16 +48,13 @@ const QA3 = () => {
     axios
       .get(`${BASE_URL}/qa_value`)
       .then((response) => {
-        setBudgets(response.data);
+        setValues(response.data);
       })
       .catch((error) => {
-        console.error("Error fetching budget data:", error);
-      });
+        console.error("Error fetching values:", error);
+    });
   }, []);
-  useEffect(() => {
-    console.log("budgets from backend:", budgets); // ✅ ดูว่ามีข้อมูลไหม
-  }, [budgets]);
-  
+
   return (
     <ImageBackground
       source={require("../assets/bg_qa_1.jpg")}
@@ -77,17 +73,17 @@ const QA3 = () => {
           navigation.goBack();
         }}
         next={
-          selectedDistance && selectedBudget !== null
+          selectedDistance && selectedValue
             ? () => {
                 navigation.navigate("QA4", {
                   selectedOption,
                   selectedPlan,
                   selectedDistance,
-                  butget: selectedBudget.toString(), // ✅ แปลงเป็น string ตามที่ TypeScript คาด
+                  butget: selectedValue?.toString() ?? "" // ✅ ใช้ selectedValue แทนช่องกรอก
                 });
               }
             : undefined
-        }        
+        }
       />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Progress progress="75" />
@@ -119,30 +115,27 @@ const QA3 = () => {
 
         {/* งบประมาณ */}
         <Text style={styles.title}>งบประมาณในการเดินทาง</Text>
-        <View style={styles.optionGrid}>
-          {budgets.map((budget) => (
-            <TouchableOpacity
-              key={budget.value_id}
-              style={[
-                styles.option,
-                selectedBudget === budget.value_id && styles.optionSelected,
-              ]}
-              onPress={() => setSelectedBudget(Number(budget.value_id))}
-
-            >
-              <Text
+          <View style={styles.optionGrid}>
+            {values.map((val) => (
+              <TouchableOpacity
+                key={val.value_id}
                 style={[
-                  styles.optionText,
-                  selectedBudget === budget.value_id && styles.optionTextSelected,
+                  styles.option,
+                  selectedValue === val.value_id && styles.optionSelected,
                 ]}
+                onPress={() => setSelectedValue(val.value_id)}
               >
-                {budget.value_money}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      
-
+                <Text
+                  style={[
+                    styles.optionText,
+                    selectedValue === val.value_id && styles.optionTextSelected,
+                  ]}
+                >
+                  {val.value_money}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
       </ScrollView>
       </KeyboardAwareScrollView>
     </ImageBackground>

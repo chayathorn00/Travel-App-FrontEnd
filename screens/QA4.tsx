@@ -147,9 +147,7 @@ const QA4 = () => {
                 ]}
                 onPress={() => toggleActivity(activity.id)}
               >
-                {selectedActivities.includes(activity.id) && (
-                  <Check width={16} height={16} />
-                )}
+                {selectedActivities.includes(activity.id)}
                 <Text
                   style={[
                     styles.optionText,
@@ -169,7 +167,7 @@ const QA4 = () => {
             <TouchableOpacity
               key={emotion.id}
               style={[
-                styles.option,
+                styles.option2,
                 selectedEmotion === emotion.id && styles.optionSelected,
               ]}
               onPress={() => setSelectedEmotion(emotion.id)}
@@ -217,6 +215,19 @@ const styles = StyleSheet.create({
     width: "40%",
     backgroundColor: Color.colorWhitesmoke_100,
     paddingVertical: 15,
+    borderRadius: Border.br_base,
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "transparent",
+    marginHorizontal: 15,
+    marginVertical: 15,
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  option2: {
+    width: "10%",
+    backgroundColor: Color.colorWhitesmoke_100,
+    paddingVertical: 10,
     borderRadius: Border.br_base,
     alignItems: "center",
     borderWidth: 2,

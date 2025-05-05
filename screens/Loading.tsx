@@ -69,8 +69,9 @@ const Loading = () => {
         longitude,
         trip_id: selectedPlan,
         distance_id: selectedDistance,
-        budget: butget,
+        value_id: butget,
         location_interest_id: Number(selectedOption),
+        activity_id: selectedActivities.map(Number),
         activity_interest_id: selectedActivities.map(Number),
         emotional_id: Number(selectedEmotion),
       };

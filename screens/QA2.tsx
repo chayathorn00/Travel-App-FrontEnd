@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorCornflowerblue,
   },
   optionText: {
-    fontSize: FontSize.size_mini,
+    fontSize: 17,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
     

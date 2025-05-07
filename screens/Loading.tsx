@@ -71,8 +71,7 @@ const Loading = () => {
         distance_id: selectedDistance,
         value_id: butget,
         location_interest_id: Number(selectedOption),
-        activity_id: selectedActivities.map(Number),
-        activity_interest_id: selectedActivities.map(Number),
+        activity_id: selectedActivities.join(','),
         emotional_id: Number(selectedEmotion),
       };
 

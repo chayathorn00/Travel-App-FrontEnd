@@ -114,7 +114,7 @@ const QA4 = () => {
           navigation.goBack();
         }}
         next={
-          selectedActivities.length >= 1 && selectedEmotion
+          selectedActivities.length >= 3 && selectedEmotion
             ? () => {
                 navigation.navigate("Loading", {
                   selectedOption,
@@ -132,7 +132,7 @@ const QA4 = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Progress progress="100" />
         <Text style={styles.title}>กิจกรรมที่คุณสนใจ</Text>
-
+        <Text style={styles.subtitle}>(เลือกอย่างต่ำ 3 ข้อ)</Text>
         {loading ? (
           <ActivityIndicator size="large" color={Color.colorCornflowerblue} />
         ) : (
@@ -192,6 +192,13 @@ const QA4 = () => {
 };
 
 const styles = StyleSheet.create({
+  subtitle:{
+    fontSize: 20,
+    fontFamily: FontFamily.KanitLight,
+    color: Color.colorBlack,
+    marginBottom: 0,
+    textAlign: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: Color.colorWhite,
@@ -203,7 +210,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontFamily: FontFamily.KanitRegular,
     color: Color.colorBlack,
-    marginBottom: 30,
+    marginBottom: 0,
     textAlign: "center",
   },
   optionGrid: {
